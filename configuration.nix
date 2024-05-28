@@ -117,6 +117,8 @@
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
+
+    # run https://github.com/pop-os/shell/blob/master_jammy/scripts/configure.sh for shortcuts
     gnomeExtensions.pop-shell
     neovim
     curl
