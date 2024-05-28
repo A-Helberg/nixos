@@ -110,6 +110,7 @@
     # require enabling PolKit integration on some desktop environments (e.g. Plasma).
     polkitPolicyOwners = [ "andre" ];
   };
+  services.tailscale.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -121,17 +122,26 @@
     curl
     #aria2c
     qemu
+    # git tools
     git
+    gitui
+
     packer
     nomad
+
+    # terminal utils
     stow
     starship
     eza
     bat
+
+
     tmux
+
     docker
     slack
     (pkgs.callPackage ./hv.nix {})
+    (pkgs.callPackage ./nomad-pack.nix {})
 
     # languages
     rustc
