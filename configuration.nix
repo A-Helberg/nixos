@@ -10,11 +10,14 @@
       ./hardware-configuration.nix
     ];
 
+  nix.settings.experimental-features = [ "flakes" "nix-command" ];
+
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader.systemd-boot.enable = true;
+  #boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "HBD"; # Define your hostname.
+  networking.hostId = "2f05574f";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -92,6 +95,7 @@
     description = "Andre";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
     shell = pkgs.fish;
+    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLlNhvRxSPN9zNLcPTSL9TbTiqIo+pscmbtL1xAI8uN andre"]
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -115,39 +119,20 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #  wget
+
+    # we need git to install our dotfiles & home-mnager configs
+    git
 
     # run https://github.com/pop-os/shell/blob/master_jammy/scripts/configure.sh for shortcuts
     gnomeExtensions.pop-shell
-    neovim
     curl
     #aria2c
     qemu
-    # git tools
-    git
-    gitui
-
-    packer
-    nomad
-
-    # terminal utils
-    stow
-    starship
-    eza
-    bat
-
-
-    tmux
+    neovim
 
     docker
-    slack
-    (pkgs.callPackage ./hv.nix {})
-    (pkgs.callPackage ./nomad-pack.nix {})
-
-    # languages
-    rustc
-    cargo
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -161,7 +146,10 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings.PasswordAuthentication = false;
+  }
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -178,4 +166,5 @@
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
+
 
