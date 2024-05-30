@@ -95,7 +95,7 @@
     description = "Andre";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
     shell = pkgs.fish;
-    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLlNhvRxSPN9zNLcPTSL9TbTiqIo+pscmbtL1xAI8uN andre"]
+    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLlNhvRxSPN9zNLcPTSL9TbTiqIo+pscmbtL1xAI8uN andre"];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -149,7 +149,7 @@
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = false;
-  }
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
