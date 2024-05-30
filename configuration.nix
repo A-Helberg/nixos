@@ -107,6 +107,7 @@
   # Install firefox.
   programs.firefox.enable = true;
   programs.fish.enable = true;
+  services.tailscale.enable = true;
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
@@ -114,7 +115,7 @@
     # require enabling PolKit integration on some desktop environments (e.g. Plasma).
     polkitPolicyOwners = [ "andre" ];
   };
-  services.tailscale.enable = true;
+
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
