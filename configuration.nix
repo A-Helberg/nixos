@@ -134,6 +134,9 @@
     neovim
 
     docker
+
+    # nixos helper
+    nh
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -167,5 +170,3 @@
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
-
-
