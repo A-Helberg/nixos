@@ -1,3 +1,8 @@
+# Usage
+
+`nh home swith`
+and
+`nh os switch`
 ## Troubleshooting
 
 ### github rate limit
