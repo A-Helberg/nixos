@@ -3,7 +3,6 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -39,8 +38,9 @@
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.displayManager.gdm.wayland = true;
-  # run `dconf write /org/gnome/mutter/experimental-features "['scale-monitor-framebuffer']"` to allow fractional scaling
+  ## run `dconf write /org/gnome/mutter/experimental-features "['scale-monitor-framebuffer']"` to allow fractional scaling
   services.xserver.desktopManager.gnome.enable = true;
+
 
   #fonts.optimizeForVeryHighDpi = true;
   fonts.fontconfig.antialias = true;
@@ -170,3 +170,5 @@
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
+
+
