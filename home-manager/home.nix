@@ -68,7 +68,7 @@
   ];
 
   imports = [
-    ./programs/neovim/default.nix
+    #./programs/neovim/default.nix
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
