@@ -135,7 +135,7 @@
     curl
     #aria2c
     qemu
-    neovim
+    vim
 
     docker
 

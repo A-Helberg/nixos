@@ -42,6 +42,7 @@ in
     lua-language-server
     rust-analyzer-unwrapped
     black
+    #nvim-python3
   ];
 
   programs.neovim = {
