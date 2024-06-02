@@ -42,8 +42,7 @@ in
     lua-language-server
     rust-analyzer-unwrapped
     black
-    neovim-unwrapped
-    #nvim-python3
+    stylua
   ];
 
   programs.neovim = {
@@ -55,6 +54,7 @@ in
 
     plugins = [
       treesitterWithGrammars
+      pkgs.vimPlugins.conjure
     ];
   };
 
