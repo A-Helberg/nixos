@@ -42,12 +42,13 @@ in
     lua-language-server
     rust-analyzer-unwrapped
     black
+    neovim-unwrapped
     #nvim-python3
   ];
 
   programs.neovim = {
     enable = true;
-    package = pkgs.neovim;
+    package = pkgs.neovim-unwrapped;
     vimAlias = true;
     coc.enable = false;
     withNodeJs = true;
