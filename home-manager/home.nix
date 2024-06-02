@@ -22,7 +22,6 @@
     pkgs.git
     pkgs.gitui
 
-    pkgs.neovim
     pkgs.packer
     pkgs.nomad
 
