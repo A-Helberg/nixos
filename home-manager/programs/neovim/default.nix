@@ -3,6 +3,7 @@ let
 
   treesitterWithGrammars = (pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
     p.bash
+    p.clojure
     p.comment
     p.css
     p.dockerfile
@@ -54,7 +55,6 @@ in
 
     plugins = [
       treesitterWithGrammars
-      pkgs.vimPlugins.conjure
     ];
   };
 

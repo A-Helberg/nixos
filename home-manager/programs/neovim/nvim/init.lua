@@ -126,6 +126,7 @@ if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
+vim.opt.rtp:prepend("~/.local/share/nvim")
 
 -- [[ Configure and install plugins ]]
 --
@@ -155,7 +156,7 @@ require("lazy").setup({
 	{ "numToStr/Comment.nvim", opts = {} },
 
 	-- Clojure
-	--{ "Olical/conjure", opts = {}},
+	"Olical/conjure",
 
 	-- Here is a more advanced example where we pass configuration
 	-- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -815,6 +816,10 @@ require("lazy").setup({
 	--    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
 	-- { import = 'custom.plugins' },
 }, {
+	dev = {
+		path = "~/.local/share/nvim/nix",
+		fallback = false,
+	},
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
 		-- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
