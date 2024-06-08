@@ -82,6 +82,7 @@ in
 
     plugins = [
       treesitterWithGrammars
+      pkgs.vimPlugins.nvim-lspconfig
     ];
 
   };
