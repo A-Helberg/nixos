@@ -35,25 +35,27 @@ let
     paths = treesitterWithGrammars.dependencies;
   };
 
+  lazy-nix-ref = "63b20ed071647bb492ed3256fbda709e4bfedc45";
+  lazy-nix-sha = "sha256-TBDZGj0NXkWvJZJ5ngEqbhovf6RPm9N+Rmphz92CS3Q" ;
+
   lazy-nix-helper-nvim = pkgs.vimUtils.buildVimPlugin {
     name = "lazy-nix-helper.nvim";
     src = pkgs.fetchFromGitHub {
       owner = "b-src";
       repo = "lazy-nix-helper.nvim";
-      rev = "63b20ed071647bb492ed3256fbda709e4bfedc45";
-      hash = "sha256-TBDZGj0NXkWvJZJ5ngEqbhovf6RPm9N+Rmphz92CS3Q";
+      rev = lazy-nix-ref;
+      hash = lazy-nix-sha;
     };
   };
 
-  #sanitizePluginName = input:
-  #let
-  #  name = lib.strings.getName input;
-  #  intermediate = lib.strings.removePrefix "vimplugin-" name;
-  #  result = lib.strings.removePrefix "lua5.1-" intermediate;
-  #in result;
+  sanitizePluginName = input:
+  let
+    name = lib.strings.getName input;
+    intermediate = lib.strings.removePrefix "vimplugin-" name;
+    result = lib.strings.removePrefix "lua5.1-" intermediate;
+  in result;
 
-  #pluginList = plugins: lib.strings.concatMapStrings (plugin: "  [\"${sanitizePluginName plugin.name}\"] = \"${plugin.outPath}\",\n") plugins;
-  pluginList = plugins: lib.strings.concatMapStrings (plugin: "  [\"${plugin.name}\"] = \"${plugin.outPath}\",\n") plugins;
+  pluginList = plugins: lib.strings.concatMapStrings (plugin: "  [\"${sanitizePluginName plugin.name}\"] = \"${plugin.outPath}\",\n") plugins;
 in
 {
   home.packages = with pkgs; [
@@ -66,6 +68,9 @@ in
     stylua
     # needed to install lsp's
     unzip
+
+    # LSs
+    luajitPackages.lua-lsp
   ];
 
   programs.neovim = {
@@ -81,7 +86,7 @@ in
 
   };
 
-  xdg.configFile."nvim/nixos.lua" = {
+  xdg.configFile."nvim/lua/nixos.lua" = {
     text = ''
       local plugins = {
       ${pluginList config.programs.neovim.plugins}

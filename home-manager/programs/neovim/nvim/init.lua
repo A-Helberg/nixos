@@ -1,4 +1,5 @@
-loadfile("./nixos.lua")
+package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/lua/?.lua"
+require("nixos")
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -121,13 +122,14 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-end ---@diagnostic disable-next-line: undefined-field
-vim.opt.rtp:prepend(lazypath)
-vim.opt.rtp:prepend("~/.local/share/nvim")
+--    Installed via nixos.lua
+-- local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+-- if not vim.loop.fs_stat(lazypath) then
+-- 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+-- 	vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+-- end ---@diagnostic disable-next-line: undefined-field
+-- vim.opt.rtp:prepend(lazypath)
+-- vim.opt.rtp:prepend("~/.local/share/nvim")
 
 -- [[ Configure and install plugins ]]
 --
@@ -329,11 +331,20 @@ require("lazy").setup({
 
 	{ -- LSP Configuration & Plugins
 		"neovim/nvim-lspconfig",
+		dir = require("lazy-nix-helper").get_plugin_path("nvim-lspconfig"),
 		dependencies = {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
-			{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
-			"williamboman/mason-lspconfig.nvim",
-			"WhoIsSethDaniel/mason-tool-installer.nvim",
+			-- Since I am on NixOS this is managed there
+			{
+				"williamboman/mason.nvim",
+				enable = require("lazy-nix-helper").mason_enabled(),
+				config = true,
+			}, -- NOTE: Must be loaded before dependants
+			{ "williamboman/mason-lspconfig.nvim", enable = require("lazy-nix-helper").mason_enabled() },
+			{
+				"WhoIsSethDaniel/mason-tool-installer.nvim",
+				enable = require("lazy-nix-helper").mason_enabled(),
+			},
 
 			-- Useful status updates for LSP.
 			-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
