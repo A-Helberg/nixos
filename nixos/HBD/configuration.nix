@@ -117,6 +117,7 @@
   };
 
   environment.sessionVariables  = {
+    # So that we don't have to specify this to nh os switch
     FLAKE = "/etc/nixos";
   };
 
@@ -174,5 +175,4 @@
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
-
 

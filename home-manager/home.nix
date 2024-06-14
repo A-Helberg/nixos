@@ -37,17 +37,21 @@
     pkgs.bat
     pkgs.tmux
     pkgs.slack
+    pkgs.ncdu
+
 
     (pkgs.callPackage ./hv.nix {})
     (pkgs.callPackage ./nomad-pack.nix {})
 
     # Dev
     pkgs.oauth2c
+    pkgs.gnumake
     pkgs.rustc
     pkgs.cargo
     pkgs.jq
     pkgs.oxker
     pkgs.gcc
+    pkgs.asdf-vm
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -130,6 +134,31 @@
         had-bluetooth-devices-setup = true;
         remember-mount-password = false;
         welcome-dialog-last-shown-version = "42.4";
+      };
+      "org/gnome/desktop/wm/keybindings" = {
+        activate-window-menu = "disabled";
+        #toggle-message-tray = "disabled";
+        toggle-message-tray = ["<Super>v"];
+        close = ["<Super>q"];
+        maximize = ["disabled"];
+        minimize = ["<Super>comma"];
+        move-to-monitor-down = ["disabled"];
+        move-to-monitor-left = ["disabled"];
+        move-to-monitor-right = ["disabled"];
+        move-to-monitor-up = ["disabled"];
+        move-to-workspace-down = ["disabled"];
+        move-to-workspace-up = ["disabled"];
+        toggle-maximized = ["<Super>m"];
+        unmaximize = ["disabled"];
+
+        # On my keyboard, holding Q results in <Shift><Control><Alt>
+        switch-to-workspace-left = ["<Shift><Control><Alt>Left"];
+        switch-to-workspace-right = ["<Shift><Control><Alt>Right"];
+
+
+        move-to-workspace-left = ["<Super><Shift><Control><Alt>Left"];
+        move-to-workspace-right = ["<Super><Shift><Control><Alt>Right"];
+        toggle-maximize = ["<Shift><Control><Alt>M"];
       };
   };
 }
