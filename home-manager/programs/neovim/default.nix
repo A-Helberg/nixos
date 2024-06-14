@@ -62,15 +62,16 @@ in
     ripgrep
     fzf
     fd
-    lua-language-server
-    rust-analyzer-unwrapped
     black
     stylua
     # needed to install lsp's
     unzip
 
     # LSs
-    luajitPackages.lua-lsp
+    #luajitPackages.lua-lsp
+    clojure-lsp
+    lua-language-server
+    rust-analyzer-unwrapped
   ];
 
   programs.neovim = {

@@ -527,6 +527,8 @@ require("lazy").setup({
 						},
 					},
 				},
+
+				clojure_lsp = {},
 			}
 
 			if not require("lazy-nix-helper").mason_enabled() then
