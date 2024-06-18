@@ -18,12 +18,15 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
+    pkgs.asdf-vm
+    pkgs.htop
     # git tools
     pkgs.git
     pkgs.gitui
 
     pkgs.packer
     pkgs.nomad
+    pkgs.vagrant
 
     # network tools
     pkgs.mtr

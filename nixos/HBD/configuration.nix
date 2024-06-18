@@ -39,7 +39,9 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.displayManager.gdm.wayland = true;
   ## run `dconf write /org/gnome/mutter/experimental-features "['scale-monitor-framebuffer']"` to allow fractional scaling
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+  };
 
 
   #fonts.optimizeForVeryHighDpi = true;
@@ -65,6 +67,7 @@
 
   # Virtualisation
   virtualisation.docker.enable = true;
+  virtualisation.virtualbox.host.enable = true;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -107,6 +110,7 @@
   # Install firefox.
   programs.firefox.enable = true;
   programs.fish.enable = true;
+  programs.nix-ld.enable = true;
   services.tailscale.enable = true;
   programs._1password.enable = true;
   programs._1password-gui = {
@@ -139,6 +143,7 @@
     vim
 
     docker
+    zlib
 
     # nixos helper
     nh
@@ -175,4 +180,3 @@
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
-
