@@ -4,7 +4,7 @@ require("nixos")
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.maplocalleader = ","
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
@@ -159,7 +159,10 @@ require("lazy").setup({
 	{ "numToStr/Comment.nvim", opts = {} },
 
 	-- Clojure
-	"Olical/conjure",
+	{
+		"Olical/conjure",
+		event = "VeryLazy",
+	},
 
 	-- Here is a more advanced example where we pass configuration
 	-- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -209,6 +212,15 @@ require("lazy").setup({
 				["<leader>w"] = { name = "[W]orkspace", _ = "which_key_ignore" },
 				["<leader>t"] = { name = "[T]oggle", _ = "which_key_ignore" },
 				["<leader>h"] = { name = "Git [H]unk", _ = "which_key_ignore" },
+
+				["<localleader>e"] = { name = "[E]valuate", _ = "which_key_ignore" },
+				["<localleader>c"] = { name = "[C]onnect", _ = "which_key_ignore" },
+				["<localleader>g"] = { name = "[G]oto", _ = "which_key_ignore" },
+				["<localleader>l"] = { name = "[L]og", _ = "which_key_ignore" },
+				["<localleader>r"] = { name = "[R]efresh", _ = "which_key_ignore" },
+				["<localleader>s"] = { name = "[S]ession", _ = "which_key_ignore" },
+				["<localleader>t"] = { name = "[T]est", _ = "which_key_ignore" },
+				["<localleader>v"] = { name = "[V]alue", _ = "which_key_ignore" },
 			})
 			-- visual mode
 			require("which-key").register({
