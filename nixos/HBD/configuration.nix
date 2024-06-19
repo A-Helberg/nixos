@@ -24,7 +24,18 @@
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
-  networking.networkmanager.enable = true;
+  networking = {
+    networkmanager.enable = true;
+    nftables.enable = true;
+
+    firewall = {
+      enable = true;
+      extraInputRules = ''
+        # allow from docker nets to host
+        ip saddr 172.0.0.0/8 accept
+      '';
+    };
+  };
 
   # Set your time zone.
   time.timeZone = "Africa/Johannesburg";
