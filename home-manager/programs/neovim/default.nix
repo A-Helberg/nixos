@@ -66,6 +66,8 @@ in
     stylua
     # needed to install lsp's
     unzip
+    # clipboard support
+    wl-clipboard
 
     # LSs
     #luajitPackages.lua-lsp
