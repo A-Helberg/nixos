@@ -79,6 +79,21 @@
   # Virtualisation
   virtualisation.docker.enable = true;
   virtualisation.virtualbox.host.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = true;
+      swtpm.enable = true;
+      ovmf = {
+        enable = true;
+        packages = [(pkgs.OVMF.override {
+          secureBoot = true;
+          tpmSupport = true;
+        }).fd];
+      };
+    };
+  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -107,7 +122,7 @@
   users.users.andre = {
     isNormalUser = true;
     description = "Andre";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" ];
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLlNhvRxSPN9zNLcPTSL9TbTiqIo+pscmbtL1xAI8uN andre"];
     packages = with pkgs; [
@@ -155,6 +170,7 @@
 
     docker
     zlib
+    openssl
 
     # nixos helper
     nh
