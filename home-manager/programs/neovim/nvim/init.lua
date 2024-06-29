@@ -6,6 +6,22 @@ require("nixos")
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
+vim.keymap.set("n", "<localleader>x", function()
+	vim.ui.input({ prompt = "Host to conect to: " }, function(input)
+		if input == nil or input == "" then
+			vim.cmd.ConjureConnect()
+		elseif string.find(input, ":") or string.find(input, " ") then
+			local h, p = string.match(input, "([%w.]+)[:%s](%d+)")
+			vim.cmd.echo("'connecting to " .. h .. "on " .. p .. "'")
+			vim.cmd.ConjureConnect(h, p)
+		else
+			vim.ui.input({ prompt = "Port to conect to: " }, function(port)
+				vim.cmd.ConjureConnect(input, port)
+			end)
+		end
+	end)
+end, { desc = "Connect to repl" })
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
