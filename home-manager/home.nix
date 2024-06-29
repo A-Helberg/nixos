@@ -27,7 +27,10 @@
     pkgs.packer
     pkgs.nomad
     pkgs.vagrant
+    pkgs.sshpass
+    pkgs.websocat
 
+    pkgs.realvnc-vnc-viewer
     # network tools
     pkgs.mtr
     pkgs.iperf3
@@ -55,6 +58,13 @@
     pkgs.oxker
     pkgs.gcc
     pkgs.asdf-vm
+    pkgs.rlwrap
+
+    pkgs.gnomeExtensions.notification-timeout
+    pkgs.gnomeExtensions.system-monitor
+    pkgs.gnomeExtensions.gsconnect
+    pkgs.gnomeExtensions.espresso
+    pkgs.gnomeExtensions.notification-banner-position
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -127,11 +137,14 @@
         disable-user-extensions = false;
         disabled-extensions = "disabled";
         enabled-extensions = [
-          "native-window-placement@gnome-shell-extensions.gcampax.github.com"
           "pop-shell@system76.com"
-          "caffeine@patapon.info"
+          "system-monitor@gnome-shell-extensions.gcampax.github.com"
           "hidetopbar@mathieu.bidon.ca"
           "gsconnect@andyholmes.github.io"
+          "espresso@coadmunkee.github.com"
+          "gsconnect@andyholmes.github.io"
+          "notification-timeout@chlumskyvaclav.gmail.com"
+          "notification-position@drugo.dev"
         ];
         favorite-apps = ["firefox.desktop" "kitty.desktop"];
         had-bluetooth-devices-setup = true;
