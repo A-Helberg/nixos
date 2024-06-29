@@ -23,6 +23,7 @@
     # git tools
     pkgs.git
     pkgs.gitui
+    pkgs.kitty
 
     pkgs.packer
     pkgs.nomad
@@ -145,6 +146,7 @@
           "gsconnect@andyholmes.github.io"
           "notification-timeout@chlumskyvaclav.gmail.com"
           "notification-position@drugo.dev"
+          "pkgs.gnomeExtensions.espresso"
         ];
         favorite-apps = ["firefox.desktop" "kitty.desktop"];
         had-bluetooth-devices-setup = true;
