@@ -45,6 +45,9 @@
     pkgs.tmux
     pkgs.slack
     pkgs.ncdu
+    pkgs.killall
+
+    pkgs.virt-manager
 
 
     (pkgs.callPackage ./hv.nix {})
@@ -60,6 +63,10 @@
     pkgs.gcc
     pkgs.asdf-vm
     pkgs.rlwrap
+    pkgs.clojure
+    
+
+    pkgs.kicad
 
     pkgs.gnomeExtensions.notification-timeout
     pkgs.gnomeExtensions.system-monitor
