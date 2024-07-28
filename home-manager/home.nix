@@ -64,6 +64,7 @@
     pkgs.asdf-vm
     pkgs.rlwrap
     pkgs.clojure
+    pkgs.terraform
     
 
     pkgs.kicad
