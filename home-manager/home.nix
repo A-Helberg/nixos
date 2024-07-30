@@ -20,6 +20,8 @@
   home.packages = [
     pkgs.asdf-vm
     pkgs.htop
+    pkgs.wireshark
+    pkgs.gns3-gui
     # git tools
     pkgs.git
     pkgs.gitui

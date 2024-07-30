@@ -30,6 +30,8 @@
 
     firewall = {
       enable = true;
+
+      #allowedTCPPorts = [ 5201 ];
       extraInputRules = ''
         # allow from docker nets to host
         ip saddr 172.0.0.0/8 accept
@@ -167,6 +169,7 @@
     #aria2c
     qemu
     vim
+    gns3-server
 
     docker
     zlib
