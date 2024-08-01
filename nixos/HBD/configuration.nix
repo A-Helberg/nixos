@@ -124,7 +124,7 @@
   users.users.andre = {
     isNormalUser = true;
     description = "Andre";
-    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "ubridge" ];
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLlNhvRxSPN9zNLcPTSL9TbTiqIo+pscmbtL1xAI8uN andre"];
     packages = with pkgs; [
@@ -198,28 +198,8 @@
     settings.PasswordAuthentication = false;
   };
 
-   services.gns3-server.ubridge.enable = true;
-    services.gns3-server.settings = {
-      Server.ubridge_path = pkgs.lib.mkForce "/run/wrappers/bin/ubridge";
-    };
-    users.groups.gns3 = { };
-    users.users.gns3 = {
-      group = "gns3";
-      isSystemUser = true;
-    };
-    systemd.services.gns3-server.serviceConfig = {
-      User = "gns3";
-      DynamicUser = pkgs.lib.mkForce false;
-      NoNewPrivileges = pkgs.lib.mkForce false;
-      RestrictSUIDSGID = pkgs.lib.mkForce false;
-      PrivateUsers = pkgs.lib.mkForce false;
-      DeviceAllow = [
-        "/dev/net/tun rw"
-        "/dev/net/tap rw"
-      ] ++ pkgs.lib.optionals config.virtualisation.libvirtd.enable [
-        "/dev/kvm"
-      ];
-    };
+  services.gns3-server.ubridge.enable = true;
+
   security.wrappers.ubridge = {
     source = "${pkgs.ubridge}/bin/ubridge";
     capabilities = "cap_net_admin,cap_net_raw=ep";
@@ -227,6 +207,28 @@
     group = "root";
     permissions = "u+rx,g+x";
   }; 
+
+  services.gns3-server.settings = {
+    Server.ubridge_path = pkgs.lib.mkForce "${config.security.wrapperDir}/ubridge";
+  };
+  users.groups.gns3 = { };
+  users.users.gns3 = {
+    group = "gns3";
+    isSystemUser = true;
+  };
+  systemd.services.gns3-server.serviceConfig = {
+    User = "gns3";
+    DynamicUser = pkgs.lib.mkForce false;
+    NoNewPrivileges = pkgs.lib.mkForce false;
+    RestrictSUIDSGID = pkgs.lib.mkForce false;
+    PrivateUsers = pkgs.lib.mkForce false;
+    DeviceAllow = [
+      "/dev/net/tun rw"
+      "/dev/net/tap rw"
+    ] ++ pkgs.lib.optionals config.virtualisation.libvirtd.enable [
+      "/dev/kvm"
+    ];
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
