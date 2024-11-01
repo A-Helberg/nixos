@@ -45,11 +45,12 @@
     pkgs.slack
     pkgs.ncdu
     pkgs.killall
+    pkgs.fish
 
 
 
-    #(pkgs.callPackage ./hv.nix {})
-    #(pkgs.callPackage ./nomad-pack.nix {})
+    (pkgs.callPackage ./hv.nix {})
+    (pkgs.callPackage ./nomad-pack.nix {})
 
     # Dev
     pkgs.oauth2c

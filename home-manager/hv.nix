@@ -1,4 +1,4 @@
-{ lib, fetchFromGitHub, rustPlatform, fetchgit }:
+{ lib, fetchFromGitHub, rustPlatform, fetchgit, pkgs }:
 
 rustPlatform.buildRustPackage rec {
   pname = "hv";
@@ -19,9 +19,11 @@ rustPlatform.buildRustPackage rec {
 
   cargoHash = "sha256-TXwBDEIhtK0v1pw9VQRULbWrX2V7vfbxAdSXhmtmjXo=";
 
-  darwinBuildInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [
+  darwinBuildInputs = lib.optionals pkgs.stdenv.isDarwin [
     pkgs.darwin.apple_sdk.frameworks.Security
   ];
+
+  buildInputs = [ ] ++ darwinBuildInputs;
 
   meta = with lib; {
     description = "like op but for Hashicorp Vault";
