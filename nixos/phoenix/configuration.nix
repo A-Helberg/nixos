@@ -7,7 +7,7 @@
     # Or modules from other flakes (such as nixos-hardware):
     # inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
-    #inputs.nh_darwin.nixDarwinModules.prebuiltin
+    inputs.nh_darwin.nixDarwinModules.prebuiltin
 
     # You can also split up your configuration and import pieces of it here:
     # ./users.nix
@@ -16,6 +16,7 @@
     # ./common/sketchybar.nix
     # ./common/aerospace.nix
   ];
+  networking.hostName = "phoenix"; # Define your hostname.
   nixpkgs.config.allowUnfree = true;
 # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
@@ -37,7 +38,9 @@
         enable = true;
         clean.enable = true;
         # Installation option once https://github.com/LnL7/nix-darwin/pull/942 is merged:
-        package = inputs.nh_darwin.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        #package = inputs.nh_darwin.packages.${pkgs.stdenv.hostPlatform.system}.default;
+       os.flake = "/Users/andre/nixos";
+       home.flake = "/Users/andre/nixos";
       };
 
       system.activationScripts.applications.text = let

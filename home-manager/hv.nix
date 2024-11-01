@@ -19,6 +19,10 @@ rustPlatform.buildRustPackage rec {
 
   cargoHash = "sha256-TXwBDEIhtK0v1pw9VQRULbWrX2V7vfbxAdSXhmtmjXo=";
 
+  darwinBuildInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [
+    pkgs.darwin.apple_sdk.frameworks.Security
+  ];
+
   meta = with lib; {
     description = "like op but for Hashicorp Vault";
     homepage = "https://github.com/A-Helberg/hv";

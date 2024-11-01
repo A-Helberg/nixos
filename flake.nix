@@ -11,15 +11,12 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     nh_darwin.url = "github:ToyVo/nh_darwin";
-    #nh_darwin.inputs.nixpkgs.follows = "nixpkgs";
-    fml.url =  "github:ToyVo/nh_darwin";
   };
 
   outputs = { self, nixpkgs, home-manager, nix-darwin, nix-homebrew, ... }@inputs: 
   let 
     inherit (self) outputs;
     systems = ["x86_64-linux" "x86_64-darwin"];
-    inputs = { inherit inputs; };
     forAllSystems = nixpkgs.lib.genAttrs systems;
     #pkgs = import nixpkgs {
     #  inherit system;
@@ -72,7 +69,13 @@
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
         extraSpecialArgs = {inherit inputs outputs;};
         # > Our main home-manager configuration file <
-        modules = [./home-manager/home.nix];
+        modules = [./home-manager/home.nix ./home-manager/linux.nix];
+      };
+      "andre@phoenix" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-darwin; # Home-manager requires 'pkgs' instance
+        extraSpecialArgs = {inherit inputs outputs;};
+        # > Our main home-manager configuration file <
+        modules = [./home-manager/home.nix ./home-manager/macos.nix];
       };
     };
 
