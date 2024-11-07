@@ -23,7 +23,6 @@
       environment.systemPackages =
         [ 
           pkgs.neovim
-          pkgs.alacritty
           pkgs.mkalias
           pkgs.obsidian
           pkgs.tmux
@@ -67,21 +66,31 @@
         enable = true;
         brews = [
           "mas"
+          "tailscale"
         ];
         casks = [
           "hammerspoon"
           "firefox"
           "iina"
           "the-unarchiver"
+          "1Password"
+          "kitty"
+          "docker"
+          "virtualbox"
         ];
         masApps = {
           "Slack" = 803453959;
+          "1PasswordSafari" = 1569813296;
+          "Amphetamine" = 937984704;
         };
         onActivation.cleanup = "zap";
       };
 
       # Auto upgrade nix package and the daemon service.
-      services.nix-daemon.enable = true;
+      services = {
+        nix-daemon.enable = true;
+        tailscale.enable = true;
+      };
       # nix.package = pkgs.nix;
 
       # Necessary for using flakes on this system.
@@ -102,6 +111,10 @@
 
      system.defaults = {
         trackpad.TrackpadThreeFingerDrag = true;
+        trackpad.Clicking = true;
+        trackpad.TrackpadRightClick = true;
+
+
         #dock.autohide  = true;
         #dock.largesize = 64;
         #dock.persistent-apps = [
