@@ -27,6 +27,14 @@
     pkgs.gitui
     pkgs.kitty
 
+    pkgs.jetbrains.idea-community-src
+
+    # Apple music clone
+    pkgs.cider
+
+    pkgs.libreoffice
+    pkgs.obsidian
+
     pkgs.packer
     pkgs.nomad
     pkgs.vagrant
@@ -37,6 +45,8 @@
     # network tools
     pkgs.mtr
     pkgs.iperf3
+
+    pkgs.appimage-run
 
     # terminal utils
     pkgs.stow
@@ -67,7 +77,6 @@
     pkgs.rlwrap
     pkgs.clojure
     pkgs.terraform
-    
 
     pkgs.kicad
 
@@ -176,7 +185,6 @@
         move-to-monitor-up = ["disabled"];
         move-to-workspace-down = ["disabled"];
         move-to-workspace-up = ["disabled"];
-        toggle-maximized = ["<Super>m"];
         unmaximize = ["disabled"];
 
         # On my keyboard, holding Q results in <Shift><Control><Alt>
@@ -186,7 +194,8 @@
 
         move-to-workspace-left = ["<Super><Shift><Control><Alt>Left"];
         move-to-workspace-right = ["<Super><Shift><Control><Alt>Right"];
-        toggle-maximize = ["<Shift><Control><Alt>M"];
+        #toggle-maximize = ["<Shift><Control><Alt>M"];
+        toggle-maximized = ["<Shift><Control><Alt>M"];
       };
   };
 }
