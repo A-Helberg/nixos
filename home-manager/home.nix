@@ -25,6 +25,14 @@
     pkgs.gitui
     pkgs.kitty
 
+    pkgs.jetbrains.idea-community-src
+
+    # Apple music clone
+    pkgs.cider
+
+    pkgs.libreoffice
+    pkgs.obsidian
+
     pkgs.packer
     pkgs.nomad
     pkgs.sshpass
@@ -34,6 +42,8 @@
     # network tools
     pkgs.mtr
     pkgs.iperf3
+
+    pkgs.appimage-run
 
     # terminal utils
     pkgs.stow
@@ -64,7 +74,6 @@
     pkgs.rlwrap
     pkgs.clojure
     pkgs.terraform
-    
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.

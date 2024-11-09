@@ -17,6 +17,7 @@
 
   networking.hostName = "HBD"; # Define your hostname.
   networking.hostId = "2f05574f";
+
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -28,14 +29,30 @@
     networkmanager.enable = true;
     nftables.enable = true;
 
+    extraHosts = "127.0.0.1 pve";
+
     firewall = {
       enable = true;
 
-      #allowedTCPPorts = [ 5201 ];
+      allowedTCPPorts = [ ];
       extraInputRules = ''
         # allow from docker nets to host
         ip saddr 172.0.0.0/8 accept
       '';
+    };
+
+    interfaces.virt1.virtual = true;
+
+    # GNS3
+    interfaces.br_gns3.ipv4.addresses = [ {
+      address = "192.168.88.2";
+      prefixLength = 24;
+    } ];
+    bridges = {
+      br_gns3 = {
+        interfaces = ["virt1"];
+
+      };
     };
   };
 
@@ -56,6 +73,17 @@
     enable = true;
   };
 
+
+  # Gaming
+  hardware.opengl = {
+    enable = true;
+    #driSupport = true;
+    driSupport32Bit = true;
+  };
+  services.xserver.videoDrivers = ["amdgpu"];
+  programs.steam.enable = true;
+  programs.steam.gamescopeSession.enable = true;
+  programs.gamemode.enable = true;
 
   #fonts.optimizeForVeryHighDpi = true;
   fonts.fontconfig.antialias = true;
@@ -104,6 +132,9 @@
   #sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
+  # FIDO device support
+  security.pam.u2f.enable = true;
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -169,14 +200,23 @@
     #aria2c
     qemu
     vim
+    # GNS3
     gns3-server
     ubridge
     virt-viewer
     spice
+    tigervnc
+    inetutils
 
     docker
     zlib
     openssl
+
+    # gaming
+    protonup
+    lutris
+    bottles
+
 
     # nixos helper
     nh
@@ -205,11 +245,12 @@
     capabilities = "cap_net_admin,cap_net_raw=ep";
     owner = "root";
     group = "root";
-    permissions = "u+rx,g+x";
+    permissions = "u+rx,g+x,o+x";
   }; 
 
   services.gns3-server.settings = {
     Server.ubridge_path = pkgs.lib.mkForce "${config.security.wrapperDir}/ubridge";
+    ubridge_path = pkgs.lib.mkForce "${config.security.wrapperDir}/ubridge";
   };
   users.groups.gns3 = { };
   users.users.gns3 = {

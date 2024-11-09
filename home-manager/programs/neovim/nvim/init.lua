@@ -6,6 +6,7 @@ require("nixos")
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
+-- A simpler conjure connect shortcut
 vim.keymap.set("n", "<localleader>x", function()
 	vim.ui.input({ prompt = "Host to conect to: " }, function(input)
 		if input == nil or input == "" then
@@ -121,6 +122,28 @@ vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left wind
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+
+vim.filetype.add({
+	-- Detect and assign filetype based on the extension of the filename
+	extension = {
+		mdx = "mdx",
+		log = "log",
+		conf = "conf",
+		env = "dotenv",
+		cljd = "clojure",
+	},
+	-- Detect and apply filetypes based on the entire filename
+	--  filename = {
+	--    [".env"] = "dotenv",
+	--    ["env"] = "dotenv",
+	--    ["tsconfig.json"] = "jsonc",
+	--  },
+	-- Detect and apply filetypes based on certain patterns of the filenames
+	--  pattern = {
+	--    -- INFO: Match filenames like - ".env.example", ".env.local" and so on
+	--    ["%.env%.[%w_.-]+"] = "dotenv",
+	--  },
+})
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -557,6 +580,9 @@ require("lazy").setup({
 				},
 
 				clojure_lsp = {},
+				dart_ls = {},
+				ocamllsp = {},
+				zls = {},
 			}
 
 			if not require("lazy-nix-helper").mason_enabled() then

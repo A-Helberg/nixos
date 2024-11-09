@@ -6,6 +6,7 @@ let
     p.clojure
     p.comment
     p.css
+    p.dart
     p.dockerfile
     p.fish
     p.gitattributes
@@ -22,12 +23,14 @@ let
     p.make
     p.markdown
     p.nix
+    p.ocaml
     p.python
     p.rust
     p.toml
     p.typescript
     p.vue
     p.yaml
+    p.zig
   ]));
 
   treesitter-parsers = pkgs.symlinkJoin {
@@ -68,12 +71,15 @@ in
     unzip
     # clipboard support
     wl-clipboard
+    ocaml
 
     # LSs
     #luajitPackages.lua-lsp
     clojure-lsp
+    ocamlPackages.ocaml-lsp
     lua-language-server
     rust-analyzer-unwrapped
+    zls
   ];
 
   programs.neovim = {
