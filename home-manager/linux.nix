@@ -2,8 +2,7 @@
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "andre";
-  nixpkgs.config.allowUnfree = true;
+  home.homeDirectory = "/home/andre";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -17,63 +16,20 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
-    pkgs.asdf-vm
-    pkgs.htop
-    pkgs.wireshark
-    # git tools
-    pkgs.git
-    pkgs.gitui
-    pkgs.kitty
 
-    pkgs.jetbrains.idea-community-src
+    #(pkgs.callPackage ./hv.nix {})
+    #(pkgs.callPackage ./nomad-pack.nix {})
 
-    # Apple music clone
-    pkgs.cider
-
-    pkgs.libreoffice
-    pkgs.obsidian
-
-    pkgs.packer
-    pkgs.nomad
-    pkgs.sshpass
-    pkgs.websocat
-
-    pkgs.realvnc-vnc-viewer
-    # network tools
-    pkgs.mtr
-    pkgs.iperf3
-
-    pkgs.appimage-run
-
-    # terminal utils
-    pkgs.stow
-    pkgs.ripgrep
-    pkgs.starship
-    pkgs.eza
-    pkgs.bat
-    pkgs.tmux
-    pkgs.slack
-    pkgs.ncdu
-    pkgs.killall
-    pkgs.fish
-
-
-
-    (pkgs.callPackage ./hv.nix {})
-    (pkgs.callPackage ./nomad-pack.nix {})
-
-    # Dev
-    pkgs.oauth2c
-    pkgs.gnumake
-    pkgs.rustc
-    pkgs.cargo
-    pkgs.jq
-    pkgs.oxker
-    pkgs.gcc
-    pkgs.asdf-vm
-    pkgs.rlwrap
-    pkgs.clojure
-    pkgs.terraform
+    # Linux only  
+    pkgs.gns3-gui
+    pkgs.vagrant
+    pkgs.virt-manager
+    pkgs.kicad
+    pkgs.gnomeExtensions.notification-timeout
+    pkgs.gnomeExtensions.system-monitor
+    pkgs.gnomeExtensions.gsconnect
+    pkgs.gnomeExtensions.espresso
+    pkgs.gnomeExtensions.notification-banner-position
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -128,17 +84,51 @@
   #
   #  /etc/profiles/per-user/andre/etc/profile.d/hm-session-vars.sh
   #
-  home.sessionVariables = {
-    EDITOR = "nvim";
+
+  dconf.settings = {
+    "org/gnome/shell" = {
+        disable-user-extensions = false;
+        disabled-extensions = "disabled";
+        enabled-extensions = [
+          "pop-shell@system76.com"
+          "system-monitor@gnome-shell-extensions.gcampax.github.com"
+          "hidetopbar@mathieu.bidon.ca"
+          "gsconnect@andyholmes.github.io"
+          "espresso@coadmunkee.github.com"
+          "gsconnect@andyholmes.github.io"
+          "notification-timeout@chlumskyvaclav.gmail.com"
+          "notification-position@drugo.dev"
+          "pkgs.gnomeExtensions.espresso"
+        ];
+        favorite-apps = ["firefox.desktop" "kitty.desktop"];
+        had-bluetooth-devices-setup = true;
+        remember-mount-password = false;
+        welcome-dialog-last-shown-version = "42.4";
+      };
+      "org/gnome/desktop/wm/keybindings" = {
+        activate-window-menu = "disabled";
+        #toggle-message-tray = "disabled";
+        toggle-message-tray = ["<Super>v"];
+        close = ["<Super>q"];
+        maximize = ["disabled"];
+        minimize = ["<Super>comma"];
+        move-to-monitor-down = ["disabled"];
+        move-to-monitor-left = ["disabled"];
+        move-to-monitor-right = ["disabled"];
+        move-to-monitor-up = ["disabled"];
+        move-to-workspace-down = ["disabled"];
+        move-to-workspace-up = ["disabled"];
+        toggle-maximized = ["<Super>m"];
+        unmaximize = ["disabled"];
+
+        # On my keyboard, holding Q results in <Shift><Control><Alt>
+        switch-to-workspace-left = ["<Shift><Control><Alt>Left"];
+        switch-to-workspace-right = ["<Shift><Control><Alt>Right"];
+
+
+        move-to-workspace-left = ["<Super><Shift><Control><Alt>Left"];
+        move-to-workspace-right = ["<Super><Shift><Control><Alt>Right"];
+        toggle-maximize = ["<Shift><Control><Alt>M"];
+      };
   };
-
-  programs.git = {
-    enable = true;
-    userName = "Andre Helberg";
-    userEmail = "helberg.andre@gmail.com";
-  };
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-
 }
