@@ -1,4 +1,4 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, pkgs-stable, config, lib, ... }:
 let
 
   treesitterWithGrammars = (pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
@@ -61,25 +61,25 @@ let
   pluginList = plugins: lib.strings.concatMapStrings (plugin: "  [\"${sanitizePluginName plugin.name}\"] = \"${plugin.outPath}\",\n") plugins;
 in
 {
-  home.packages = with pkgs; [
-    ripgrep
-    fzf
-    fd
-    black
-    stylua
+  home.packages = [
+    pkgs.ripgrep
+    pkgs.fzf
+    pkgs.fd
+    pkgs.black
+    pkgs.stylua
     # needed to install lsp's
-    unzip
+    pkgs.unzip
     # clipboard support
-    wl-clipboard
-    ocaml
+    pkgs.wl-clipboard
+    pkgs.ocaml
 
     # LSs
     #luajitPackages.lua-lsp
-    clojure-lsp
-    ocamlPackages.ocaml-lsp
-    lua-language-server
-    rust-analyzer-unwrapped
-    zls
+    pkgs-stable.clojure-lsp
+    pkgs.ocamlPackages.ocaml-lsp
+    pkgs.lua-language-server
+    pkgs.rust-analyzer-unwrapped
+    #zls
   ];
 
   programs.neovim = {

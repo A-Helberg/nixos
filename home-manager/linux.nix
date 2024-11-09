@@ -17,14 +17,19 @@
   # environment.
   home.packages = [
 
-    #(pkgs.callPackage ./hv.nix {})
-    #(pkgs.callPackage ./nomad-pack.nix {})
-
-    # Linux only  
+    pkgs.jetbrains.idea-community-src
     pkgs.gns3-gui
     pkgs.vagrant
     pkgs.virt-manager
     pkgs.kicad
+
+    pkgs.wireshark
+
+    # Apple music on linux
+    pkgs.cider
+
+    pkgs.libreoffice
+
     pkgs.gnomeExtensions.notification-timeout
     pkgs.gnomeExtensions.system-monitor
     pkgs.gnomeExtensions.gsconnect

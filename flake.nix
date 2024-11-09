@@ -4,6 +4,8 @@
   inputs = {
 
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+
     # Home manager
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -13,7 +15,7 @@
     nh_darwin.url = "github:ToyVo/nh_darwin";
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-homebrew, ... }@inputs: 
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, nix-darwin, nix-homebrew, ... }@inputs: 
   let 
     inherit (self) outputs;
     systems = ["x86_64-linux" "x86_64-darwin"];
@@ -67,13 +69,15 @@
     homeConfigurations = {
       "andre@HBD" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
+        extraSpecialArgs = {inherit inputs outputs;
+          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;};
         # > Our main home-manager configuration file <
         modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };
       "andre@phoenix" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-darwin; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
+        extraSpecialArgs = {inherit inputs outputs;
+          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;};
         # > Our main home-manager configuration file <
         modules = [./home-manager/home.nix ./home-manager/macos.nix];
       };

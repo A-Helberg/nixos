@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, pkgs-stable, ... }:
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -17,20 +17,14 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
-    pkgs.asdf-vm
     pkgs.htop
-    pkgs.wireshark
+
     # git tools
     pkgs.git
     pkgs.gitui
     pkgs.kitty
 
-    pkgs.jetbrains.idea-community-src
 
-    # Apple music clone
-    pkgs.cider
-
-    pkgs.libreoffice
     pkgs.obsidian
 
     pkgs.packer
@@ -43,9 +37,9 @@
     pkgs.mtr
     pkgs.iperf3
 
-    pkgs.appimage-run
+    #pkgs.appimage-run
 
-    # terminal utils
+    ## terminal utils
     pkgs.stow
     pkgs.ripgrep
     pkgs.starship
@@ -53,7 +47,7 @@
     pkgs.bat
     pkgs.tmux
     pkgs.slack
-    pkgs.ncdu
+    pkgs-stable.ncdu
     pkgs.killall
     pkgs.fish
 
@@ -62,15 +56,16 @@
     (pkgs.callPackage ./hv.nix {})
     (pkgs.callPackage ./nomad-pack.nix {})
 
-    # Dev
+    ## Dev
     pkgs.oauth2c
     pkgs.gnumake
     pkgs.rustc
     pkgs.cargo
     pkgs.jq
-    pkgs.oxker
     pkgs.gcc
-    pkgs.asdf-vm
+
+    ##pkgs.asdf-vm
+
     pkgs.rlwrap
     pkgs.clojure
     pkgs.terraform
