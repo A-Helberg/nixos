@@ -14,6 +14,10 @@
   # release notes.
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
+
+  # COLORS!!!
+  #catppuccin.enable = true;
+  #catppuccin.flavor = "mocha";
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
@@ -47,7 +51,7 @@
     pkgs.bat
     pkgs.tmux
     pkgs.slack
-    pkgs-stable.ncdu
+    #pkgs-stable.ncdu
     pkgs.killall
     pkgs.fish
 

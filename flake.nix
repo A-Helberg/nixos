@@ -13,9 +13,10 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     nh_darwin.url = "github:ToyVo/nh_darwin";
+    catppuccin.url = "github:catppuccin/nix";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, nix-darwin, nix-homebrew, ... }@inputs: 
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, nix-darwin, nix-homebrew, catppuccin, ... }@inputs: 
   let 
     inherit (self) outputs;
     systems = ["x86_64-linux" "x86_64-darwin"];
@@ -40,6 +41,16 @@
           ./nixos/HBD/configuration.nix
         ];
       };
+      kraken = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs outputs;
+        };
+
+        modules = [
+          ./nixos/kraken/configuration.nix
+        ];
+      };
     };
 
     darwinConfigurations = {
@@ -50,7 +61,8 @@
         system = "x86_64-darwin";
         modules = [
           ./nixos/phoenix/configuration.nix
-
+            # does not work becuase grub?
+            #catppuccin.nixosModules.catppuccin
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
@@ -77,9 +89,20 @@
       "andre@phoenix" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-darwin; # Home-manager requires 'pkgs' instance
         extraSpecialArgs = {inherit inputs outputs;
-          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;};
+          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-darwin;};
         # > Our main home-manager configuration file <
-        modules = [./home-manager/home.nix ./home-manager/macos.nix];
+        modules = [
+            ./home-manager/home.nix
+            ./home-manager/macos.nix
+            #catppuccin.homeManagerModules.catppuccin
+        ];
+      };
+      "andre@kraken" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-darwin; # Home-manager requires 'pkgs' instance
+        extraSpecialArgs = {inherit inputs outputs;
+          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-darwin;};
+        # > Our main home-manager configuration file <
+        modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };
     };
 

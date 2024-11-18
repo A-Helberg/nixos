@@ -18,28 +18,28 @@
   ];
   networking.hostName = "phoenix"; # Define your hostname.
   nixpkgs.config.allowUnfree = true;
-# List packages installed in system profile. To search by name, run:
-      # $ nix-env -qaP | grep wget
-      environment.systemPackages =
-        [ 
-          pkgs.neovim
-          pkgs.mkalias
-          pkgs.obsidian
-          pkgs.tmux
-        ];
-       nix.extraOptions = ''
-    auto-optimise-store = true
-    experimental-features = nix-command flakes
-    extra-platforms = x86_64-darwin aarch64-darwin
-  '';
+    # List packages installed in system profile. To search by name, run:
+    # $ nix-env -qaP | grep wget
+    environment.systemPackages =
+      [ 
+        pkgs.neovim
+        pkgs.mkalias
+        pkgs.obsidian
+        pkgs.tmux
+      ];
+    nix.extraOptions = ''
+      auto-optimise-store = true
+      experimental-features = nix-command flakes
+      extra-platforms = x86_64-darwin aarch64-darwin
+    '';
 
       programs.nh = {
         enable = true;
         clean.enable = true;
         # Installation option once https://github.com/LnL7/nix-darwin/pull/942 is merged:
         #package = inputs.nh_darwin.packages.${pkgs.stdenv.hostPlatform.system}.default;
-       os.flake = "/Users/andre/nixos";
-       home.flake = "/Users/andre/nixos";
+        os.flake = "/Users/andre/nixos";
+        home.flake = "/Users/andre/nixos";
       };
 
       system.activationScripts.applications.text = let
@@ -55,7 +55,7 @@
           rm -rf /Applications/Nix\ Apps
           mkdir -p /Applications/Nix\ Apps
           find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-          while read src; do
+          while read -r src; do
             app_name=$(basename "$src")
             echo "copying $src" >&2
             ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
@@ -67,6 +67,7 @@
         brews = [
           "mas"
           "tailscale"
+          "iproute2mac"
         ];
         casks = [
           "hammerspoon"
