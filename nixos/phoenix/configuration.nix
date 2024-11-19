@@ -62,6 +62,19 @@
           done
       '';
 
+
+
+  # doesn't seem to work
+  #      system.activationScripts.enableFileSharing = pkgs.lib.mkForce ''
+  #        # Add a shared directory (e.g., /Users/Shared)
+  #        #sudo sharing -a /Users/Shared
+  #
+  #        # Attempt to enable the SMB service
+  #        #sudo launchctl enable system/com.apple.smbd
+  #        #sudo launchctl kickstart -k system/com.apple.smbd
+  #        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.smbd.plist
+  #      '';
+
       homebrew = {
         enable = true;
         brews = [
@@ -109,6 +122,7 @@
 
       # The platform the configuration will be used on.
       nixpkgs.hostPlatform = "x86_64-darwin";
+
 
      system.defaults = {
         trackpad.TrackpadThreeFingerDrag = true;

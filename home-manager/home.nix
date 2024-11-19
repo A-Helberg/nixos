@@ -20,6 +20,15 @@
   #catppuccin.flavor = "mocha";
   # The home.packages option allows you to install Nix packages into your
   # environment.
+
+  programs.fish.enable = true;
+  programs.kitty = pkgs.lib.mkForce {
+    enable = true;
+    settings = {
+      shell = "${pkgs.fish}/bin/fish";
+    };
+
+  };
   home.packages = [
     pkgs.htop
 
@@ -53,7 +62,6 @@
     pkgs.slack
     #pkgs-stable.ncdu
     pkgs.killall
-    pkgs.fish
 
 
 
@@ -94,6 +102,7 @@
 
   imports = [
     ./programs/neovim/default.nix
+    ./programs/fish/default.nix
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
