@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-stable, ... }:
+{ config, pkgs, pkgs-stable, catppuccin, ... }:
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -17,15 +17,19 @@
 
   # COLORS!!!
   #catppuccin.enable = true;
-  #catppuccin.flavor = "mocha";
+  catppuccin.flavor = "mocha";
   # The home.packages option allows you to install Nix packages into your
   # environment.
 
-  programs.fish.enable = true;
+  programs.zsh = {
+    enable = true;
+    # catppuccin.enable = true;
+  };
+
   programs.kitty = pkgs.lib.mkForce {
     enable = true;
     settings = {
-      shell = "${pkgs.fish}/bin/fish";
+      shell = "${pkgs.zsh}/bin/zsh";
     };
 
   };
@@ -102,7 +106,6 @@
 
   imports = [
     ./programs/neovim/default.nix
-    ./programs/fish/default.nix
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

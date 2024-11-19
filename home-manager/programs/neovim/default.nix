@@ -8,7 +8,7 @@ let
     p.css
     p.dart
     p.dockerfile
-    p.fish
+    #p.zsh
     p.gitattributes
     p.gitignore
     p.go

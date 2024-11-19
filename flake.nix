@@ -92,15 +92,16 @@
           pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-darwin;};
         # > Our main home-manager configuration file <
         modules = [
+            catppuccin.homeManagerModules.catppuccin
             ./home-manager/home.nix
             ./home-manager/macos.nix
-            #catppuccin.homeManagerModules.catppuccin
         ];
       };
       "andre@kraken" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-darwin; # Home-manager requires 'pkgs' instance
         extraSpecialArgs = {inherit inputs outputs;
-          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-darwin;};
+          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-darwin;
+          };
         # > Our main home-manager configuration file <
         modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };
