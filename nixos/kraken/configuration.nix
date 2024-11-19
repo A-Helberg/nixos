@@ -243,18 +243,9 @@
 
 
 
-  # ------------------------------------
-  service.dnsmasq = {
-    enable = true;
-    settings = ''
-      interface=thunderbolt0          # Replace eth0 with your actual network interface
-      dhcp-range=10.253.0.3,10.253.0.3,1h
-      dhcp-host=XX:XX:XX:XX:XX:XX,10.254.0.2
-    '';
-  };
-
-  fileSystems."/Users/andre/" = {
-    device = "//10.253.0.2/home";       # Replace with your server and share path
+  systemd.tmpfiles.rules = ["d /Users/andre 0755 andre andre"];
+  fileSystems."/Users/andre" = {
+    device = "//10.253.0.2/andre";       # Replace with your server and share path
     fsType = "cifs";                    # Filesystem type
     options = [
       "rw"                              # Read-write access
@@ -262,7 +253,7 @@
       "gid=1000"                        # Replace 1000 with the GID of the specific user
       "credentials=/home/andre/.cifs-creds" # Path to credentials file
       "vers=3.0"                        # SMB version (adjust if needed)
-      "reconnect"                       # Automatically reconnect if disconnected
+      "soft"
     ];
   };
 

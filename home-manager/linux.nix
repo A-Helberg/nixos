@@ -17,11 +17,12 @@
   # environment.
   home.packages = [
 
-    pkgs.jetbrains.idea-community-src
+    #pkgs.jetbrains.idea-community-src
     pkgs.gns3-gui
-    pkgs.vagrant
+    #pkgs.vagrant
+    (pkgs.vagrant.override { withLibvirt = false; })
     pkgs.virt-manager
-    pkgs.kicad
+#    pkgs.kicad
 
     pkgs.wireshark
 

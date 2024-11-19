@@ -5,6 +5,8 @@
   home.username = "andre";
   nixpkgs.config.allowUnfree = true;
 
+nixpkgs.config.allowBroken = true;
+
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
   # introduces backwards incompatible changes.
