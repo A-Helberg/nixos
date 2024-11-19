@@ -92,9 +92,9 @@
           pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-darwin;};
         # > Our main home-manager configuration file <
         modules = [
+            catppuccin.homeManagerModules.catppuccin
             ./home-manager/home.nix
             ./home-manager/macos.nix
-            #catppuccin.homeManagerModules.catppuccin
         ];
       };
       "andre@kraken" = home-manager.lib.homeManagerConfiguration {

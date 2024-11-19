@@ -156,7 +156,7 @@
     isNormalUser = true;
     description = "Andre";
     extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "ubridge" ];
-    shell = pkgs.fish;
+    shell = pkgs.zsh;
     openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLlNhvRxSPN9zNLcPTSL9TbTiqIo+pscmbtL1xAI8uN andre"];
     packages = with pkgs; [
     #  thunderbird
@@ -168,7 +168,7 @@
 
   # Install Programs.
   programs.firefox.enable = true;
-  programs.fish.enable = true;
+  programs.zsh.enable = true;
   programs.nix-ld.enable = true;
   services.tailscale.enable = true;
   programs._1password.enable = true;

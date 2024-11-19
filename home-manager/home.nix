@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-stable, ... }:
+{ config, pkgs, pkgs-stable, catppuccin, ... }:
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -17,9 +17,27 @@
 
   # COLORS!!!
   #catppuccin.enable = true;
-  #catppuccin.flavor = "mocha";
+  catppuccin.flavor = "mocha";
   # The home.packages option allows you to install Nix packages into your
   # environment.
+
+  programs.zsh = {
+    enable = true;
+    # catppuccin.enable = true;
+    shellAliases = {
+      remote = "ssh -t 10.253.0.1 \" cd $PWD ;  exec \"/usr/bin/env zsh\" -c \"$@\"  \"";
+      #remote = "ssh -t 10.253.0.1 \" cd $PWD ; TERM='screen-256color' exec \"/usr/bin/bash\" -c \"$@\"  \"";
+    };
+  };
+
+
+  programs.kitty = pkgs.lib.mkForce {
+    enable = true;
+    settings = {
+      shell = "${pkgs.zsh}/bin/zsh";
+    };
+
+  };
   home.packages = [
     pkgs.htop
 
@@ -53,7 +71,6 @@
     pkgs.slack
     #pkgs-stable.ncdu
     pkgs.killall
-    pkgs.fish
 
 
 
