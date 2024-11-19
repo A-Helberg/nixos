@@ -24,7 +24,12 @@
   programs.zsh = {
     enable = true;
     # catppuccin.enable = true;
+    shellAliases = {
+      remote = "ssh -t 10.253.0.1 \" cd $PWD ;  exec \"/usr/bin/env zsh\" -c \"$@\"  \"";
+      #remote = "ssh -t 10.253.0.1 \" cd $PWD ; TERM='screen-256color' exec \"/usr/bin/bash\" -c \"$@\"  \"";
+    };
   };
+
 
   programs.kitty = pkgs.lib.mkForce {
     enable = true;
