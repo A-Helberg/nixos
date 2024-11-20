@@ -245,8 +245,28 @@
 
 
 
-  systemd.tmpfiles.rules = ["d /Users/andre 0755 andre andre"];
-  fileSystems."/Users/andre" = {
+  # overlay fs to allow commands like docker to be run form macos
+  # Paths will be the Same on poth so $PWD can be used to mount volumes
+
+  # the lowerdir is /mnt/remote/Users in which we symlink to the cifs mount /mnt/remote/mac
+  # /mnt/remote/mac is a cifs mount to the Users home directory on the mac
+  # we use an overlay fs so that files written on linux do not clobber the mac's version
+  systemd.tmpfiles.rules = [
+    "d /Users/andre 0755 andre andre"
+    "d /mnt/remote 0755 andre andre"
+    "d /mnt/remote/mac 0755 andre andre"
+    "d /mnt/remote/Users 0755 andre andre"
+    "d /mnt/remote/workdir 0755 andre andre"
+    "d /mnt/remote/upperdir 0755 andre andre"
+  ];
+
+  system.userActivationScripts.linktosharedfolder.text = ''
+    if [[ ! -h "/mnt/remote/Users/andre" ]]; then
+      ln -s "/mnt/remote/mac/" "/mnt/remote/Users/andre"
+    fi
+  '';
+
+  fileSystems."/mnt/remote/mac" = {
     device = "//10.253.0.2/andre";       # Replace with your server and share path
     fsType = "cifs";                    # Filesystem type
     options = [
@@ -256,6 +276,17 @@
       "credentials=/home/andre/.cifs-creds" # Path to credentials file
       "vers=3.0"                        # SMB version (adjust if needed)
       "soft"
+    ];
+  };
+
+
+  fileSystems."/Users" = {
+    device = "overlay";
+    fsType = "overlay";                    # Filesystem type
+    options = [
+      "lowerdir=/mnt/remote/Users"
+      "upperdir=/mnt/remote/upperdir"
+      "workdir=/mnt/remote/workdir"
     ];
   };
 
