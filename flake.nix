@@ -4,6 +4,7 @@
   inputs = {
 
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs-bleeding.url = "github:nixos/nixpkgs?ref=master";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
 
     # Home manager
@@ -16,11 +17,12 @@
     catppuccin.url = "github:catppuccin/nix";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, nix-darwin, nix-homebrew, catppuccin, ... }@inputs: 
+  outputs = { self, nixpkgs, nixpkgs-stable, nixpkgs-bleeding, home-manager, nix-darwin, nix-homebrew, catppuccin, ... }@inputs: 
   let 
     inherit (self) outputs;
     systems = ["x86_64-linux" "x86_64-darwin"];
     forAllSystems = nixpkgs.lib.genAttrs systems;
+    #forAllSystems = nixpkgs-bleeding.lib.genAttrs systems;
     #pkgs = import nixpkgs {
     #  inherit system;
     #  config = {
@@ -45,6 +47,7 @@
         system = "x86_64-linux";
         specialArgs = {
           inherit inputs outputs;
+          pkgs-bleeding = nixpkgs-bleeding.legacyPackages.x86_64-linux;
         };
 
         modules = [
