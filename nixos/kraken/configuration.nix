@@ -177,6 +177,7 @@
   environment.systemPackages = with pkgs; [
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
+    mergerfs
     pkgs-bleeding.docker
     pkgs-bleeding.docker-compose
 
@@ -252,42 +253,58 @@
   # /mnt/remote/mac is a cifs mount to the Users home directory on the mac
   # we use an overlay fs so that files written on linux do not clobber the mac's version
   systemd.tmpfiles.rules = [
-    "d /Users/andre 0755 andre andre"
+    "d /Users 0755 andre andre"
+
     "d /mnt/remote 0755 andre andre"
-    "d /mnt/remote/mac 0755 andre andre"
     "d /mnt/remote/Users 0755 andre andre"
+    "d /mnt/remote/Users/andre 0755 andre andre"
+
     "d /mnt/remote/workdir 0755 andre andre"
     "d /mnt/remote/upperdir 0755 andre andre"
+
+    "d /mnt/merger/Users 0755 andre andre"
   ];
 
-  system.userActivationScripts.linktosharedfolder.text = ''
-    if [[ ! -h "/mnt/remote/Users/andre" ]]; then
-      ln -s "/mnt/remote/mac/" "/mnt/remote/Users/andre"
-    fi
-  '';
+  #system.userActivationScripts.linktosharedfolder.text = ''
+  #  if [[ ! -h "/mnt/remote/Users/andre/Projects" ]]; then
+  #    ln -s "/mnt/remote/mac/" "/mnt/remote/Users/andre/Projects"
+  #  fi
+  #'';
 
-  fileSystems."/mnt/remote/mac" = {
-    device = "//10.253.0.2/andre";       # Replace with your server and share path
+  fileSystems."/mnt/remote/Users/andre/Projects" = {
+    device = "//10.253.0.2/Projects";       # Replace with your server and share path
     fsType = "cifs";                    # Filesystem type
     options = [
       "rw"                              # Read-write access
       "uid=1000"                        # Replace 1000 with the UID of the specific user
-      "gid=1000"                        # Replace 1000 with the GID of the specific user
+      "gid=100"                        # Replace 1000 with the GID of the specific user
       "credentials=/home/andre/.cifs-creds" # Path to credentials file
       "vers=3.0"                        # SMB version (adjust if needed)
       "soft"
+      "rw"
     ];
+    neededForBoot = false; # Ensure it’s not mounted at boot automatically
+  };
+
+  fileSystems."/mnt/merger/Users" = {
+    depends = ["/mnt/remote/Users/andre/Projects"];
+    device = "/mnt/remote/Users";
+    fsType = "mergerfs";                    # Filesystem type
+    neededForBoot = false; # Ensure it’s not mounted at boot automatically
   };
 
 
   fileSystems."/Users" = {
     device = "overlay";
     fsType = "overlay";                    # Filesystem type
+    depends = ["/mnt/merger/Users"];
+    neededForBoot = false; # Ensure it’s not mounted at boot automatically
     options = [
-      "lowerdir=/mnt/remote/Users"
+      "lowerdir=/mnt/merger/Users"
       "upperdir=/mnt/remote/upperdir"
       "workdir=/mnt/remote/workdir"
     ];
   };
+
 
 }
