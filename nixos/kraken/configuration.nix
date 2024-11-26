@@ -52,11 +52,15 @@
   # Select internationalisation properties.
   i18n.defaultLocale = "en_ZA.UTF-8";
 
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  services.xserver.displayManager.autoLogin.enable = true;
+  services.xserver.displayManager.autoLogin.user = "andre";
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm.autoSuspend = false;
   services.xserver.displayManager.gdm.wayland = true;
   ## run `dconf write /org/gnome/mutter/experimental-features "['scale-monitor-framebuffer']"` to allow fractional scaling
   services.xserver.desktopManager.gnome = {
@@ -94,7 +98,12 @@
   };
 
   # Virtualisation
+  boot.binfmt.emulatedSystems = ["aarch64-linux"];
+  boot.binfmt.preferStaticEmulators = true;
   virtualisation.docker.enable = true;
+  virtualisation.docker.daemon.settings = {features = {
+    containerd-snapshotter = true;
+  };};
   virtualisation.virtualbox.host.enable = true;
   virtualisation.libvirtd = {
     enable = true;
