@@ -39,13 +39,18 @@
     };
 
   };
+
   home.packages = [
     pkgs.htop
 
     # git tools
     pkgs.git
     pkgs.gitui
+
     pkgs.kitty
+
+    pkgs.caddy
+
 
 
     pkgs.obsidian

@@ -43,6 +43,16 @@
           ./nixos/HBD/configuration.nix
         ];
       };
+      nephelae = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs outputs;
+        };
+
+        modules = [
+          ./nixos/nephelae/configuration.nix
+        ];
+      };
       kraken = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
@@ -83,6 +93,13 @@
 
     homeConfigurations = {
       "andre@HBD" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
+        extraSpecialArgs = {inherit inputs outputs;
+          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;};
+        # > Our main home-manager configuration file <
+        modules = [./home-manager/home.nix ./home-manager/linux.nix];
+      };
+      "andre@nephelae" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
         extraSpecialArgs = {inherit inputs outputs;
           pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;};
