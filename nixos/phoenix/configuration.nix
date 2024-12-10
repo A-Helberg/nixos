@@ -18,15 +18,41 @@
   ];
   networking.hostName = "phoenix"; # Define your hostname.
   nixpkgs.config.allowUnfree = true;
-    # List packages installed in system profile. To search by name, run:
-    # $ nix-env -qaP | grep wget
-    environment.systemPackages =
-      [ 
-        pkgs.neovim
-        pkgs.mkalias
-        pkgs.obsidian
-        pkgs.tmux
-      ];
+  # List packages installed in system profile. To search by name, run:
+  # $ nix-env -qaP | grep wget
+  environment.systemPackages =
+    [ 
+      pkgs.neovim
+      pkgs.mkalias
+      pkgs.obsidian
+      pkgs.tmux
+      pkgs.wezterm
+    ];
+
+  homebrew = {
+    enable = true;
+    brews = [
+      "mas"
+      "tailscale"
+      "iproute2mac"
+    ];
+    casks = [
+      "hammerspoon"
+      "firefox"
+      "iina"
+      "the-unarchiver"
+      "1Password"
+      "kitty"
+      "docker"
+      "virtualbox"
+    ];
+    masApps = {
+      "Slack" = 803453959;
+      "1PasswordSafari" = 1569813296;
+      "Amphetamine" = 937984704;
+    };
+    onActivation.cleanup = "zap";
+  };
     nix.extraOptions = ''
       auto-optimise-store = true
       experimental-features = nix-command flakes
@@ -75,30 +101,6 @@
   #        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.smbd.plist
   #      '';
 
-      homebrew = {
-        enable = true;
-        brews = [
-          "mas"
-          "tailscale"
-          "iproute2mac"
-        ];
-        casks = [
-          "hammerspoon"
-          "firefox"
-          "iina"
-          "the-unarchiver"
-          "1Password"
-          "kitty"
-          "docker"
-          "virtualbox"
-        ];
-        masApps = {
-          "Slack" = 803453959;
-          "1PasswordSafari" = 1569813296;
-          "Amphetamine" = 937984704;
-        };
-        onActivation.cleanup = "zap";
-      };
 
       # Auto upgrade nix package and the daemon service.
       services = {

@@ -105,7 +105,8 @@
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
+    (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    #pkgs.nerd-fonts.jetbrains-mono
 
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your
@@ -115,8 +116,16 @@
     # '')
   ];
 
+  programs.wezterm.enable = true;
+  programs.wezterm.extraConfig = ''
+    local config = wezterm.config_builder()
+    config.front_end = "WebGpu"
+
+    return config
+  '';
+
   imports = [
-    ./programs/neovim/default.nix
+    ../programs/neovim/default.nix
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
