@@ -120,26 +120,13 @@
     # '')
   ];
 
-  programs.wezterm = {
-    enable = true;
-
-    # makes the prompt faster
-    enableZshIntegration = false;
-
-    extraConfig = ''
-      local config = wezterm.config_builder()
-      config.front_end = "WebGpu"
-      config.enable_tab_bar = false
-
-      return config
-    '';
-  };
 
 
   imports = [
     ../programs/neovim
     ../programs/zsh
     ../programs/starship
+    ../programs/wezterm
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

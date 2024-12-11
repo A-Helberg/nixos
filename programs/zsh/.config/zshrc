@@ -2,6 +2,9 @@
 eval "$(starship init zsh)"
 
 
+# RipGrep
+alias rg="rg --hidden"
+
 # Git
 
 alias gst='git status'
