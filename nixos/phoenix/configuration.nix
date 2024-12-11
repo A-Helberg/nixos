@@ -7,7 +7,6 @@
     # Or modules from other flakes (such as nixos-hardware):
     # inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
-    inputs.nh_darwin.nixDarwinModules.prebuiltin
 
     # You can also split up your configuration and import pieces of it here:
     # ./users.nix
@@ -27,6 +26,7 @@
       pkgs.obsidian
       pkgs.tmux
       pkgs.wezterm
+      pkgs.nh
     ];
 
   homebrew = {
@@ -45,6 +45,7 @@
       "kitty"
       "docker"
       "virtualbox"
+      "arc"
     ];
     masApps = {
       "Slack" = 803453959;
@@ -59,14 +60,14 @@
       extra-platforms = x86_64-darwin aarch64-darwin
     '';
 
-      programs.nh = {
-        enable = true;
-        clean.enable = true;
-        # Installation option once https://github.com/LnL7/nix-darwin/pull/942 is merged:
-        #package = inputs.nh_darwin.packages.${pkgs.stdenv.hostPlatform.system}.default;
-        os.flake = "/Users/andre/nixos";
-        home.flake = "/Users/andre/nixos";
-      };
+    #  programs.nh = {
+    #    enable = true;
+    #    clean.enable = true;
+    #    # Installation option once https://github.com/LnL7/nix-darwin/pull/942 is merged:
+    #    #package = inputs.nh_darwin.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    #    os.flake = "/Users/andre/nixos";
+    #    home.flake = "/Users/andre/nixos";
+    #  };
 
       system.activationScripts.applications.text = let
           env = pkgs.buildEnv {

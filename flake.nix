@@ -16,11 +16,10 @@
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
-    nh_darwin.url = "github:ToyVo/nh_darwin";
     catppuccin.url = "github:catppuccin/nix";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, nixpkgs-bleeding, home-manager, nix-darwin, nix-homebrew, catppuccin, ... }@inputs: 
+  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-homebrew, catppuccin, ... }@inputs: 
   let 
     inherit (self) outputs;
       #systems = ["x86_64-linux" "x86_64-darwin"];
@@ -86,10 +85,11 @@
           inherit inputs outputs ;
         };
         system = "x86_64-darwin";
+        #pkgs = pkgs "x86_64-darwin";
         modules = [
           ./nixos/phoenix/configuration.nix
-            # does not work becuase grub?
-            #catppuccin.nixosModules.catppuccin
+          # does not work becuase grub?
+          #catppuccin.nixosModules.catppuccin
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
