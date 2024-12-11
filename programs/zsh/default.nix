@@ -17,3 +17,10 @@ in
     recursive = true;
   };
 }
+
+# Debugging
+
+# ```
+# zmodload zsh/zprof
+# zprof
+# ```

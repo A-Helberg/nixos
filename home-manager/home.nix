@@ -16,8 +16,9 @@
 
 
   # COLORS!!!
-  #catppuccin.enable = true;
+  catppuccin.enable = true;
   catppuccin.flavor = "mocha";
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
 
@@ -116,16 +117,21 @@
     # '')
   ];
 
-  programs.wezterm.enable = true;
-  programs.wezterm.extraConfig = ''
-    local config = wezterm.config_builder()
-    config.front_end = "WebGpu"
-    config.enable_tab_bar = false
+  programs.wezterm = {
+    enable = true;
 
-    return config
-  '';
+    # makes the prompt faster
+    enableZshIntegration = false;
 
-  programs.starship.enable = true;
+    extraConfig = ''
+      local config = wezterm.config_builder()
+      config.front_end = "WebGpu"
+      config.enable_tab_bar = false
+
+      return config
+    '';
+  };
+
 
   imports = [
     ../programs/neovim
