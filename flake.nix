@@ -8,8 +8,11 @@
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
 
     # Home manager
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
@@ -20,15 +23,27 @@
   outputs = { self, nixpkgs, nixpkgs-stable, nixpkgs-bleeding, home-manager, nix-darwin, nix-homebrew, catppuccin, ... }@inputs: 
   let 
     inherit (self) outputs;
-    systems = ["x86_64-linux" "x86_64-darwin"];
-    forAllSystems = nixpkgs.lib.genAttrs systems;
-    #forAllSystems = nixpkgs-bleeding.lib.genAttrs systems;
-    #pkgs = import nixpkgs {
-    #  inherit system;
-    #  config = {
-    #    allowUnfree = true;
-    #  };
-    #};
+      #systems = ["x86_64-linux" "x86_64-darwin"];
+
+    # https://github.com/paholg/dotfiles/blob/main/flake.nix
+    pkgs_overlay = final: prev: {
+      vimPlugins = prev.vimPlugins // {
+        catppuccin = prev.vimPlugins.catppuccin.overrideAttrs (oldAttrs: {
+          name = "catppuccin-nvim-theme";
+        });
+      };
+    };
+
+    pkgs = system:
+      import inputs.nixpkgs {
+        #overlays = [
+        #  pkgs_overlay
+        #];
+        inherit system;
+        # FIXME
+        config.allowUnfree = true;
+      };
+
   in
   {
 
@@ -57,7 +72,6 @@
         system = "x86_64-linux";
         specialArgs = {
           inherit inputs outputs;
-          pkgs-bleeding = nixpkgs-bleeding.legacyPackages.x86_64-linux;
         };
 
         modules = [
@@ -89,27 +103,23 @@
         ];
       };
     };
-    darwinPackages = self.darwinConfigurations.phoenix.pkgs;
+
+    #darwinPackages = self.darwinConfigurations.phoenix.pkgs;
 
     homeConfigurations = {
       "andre@HBD" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;
-          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;};
-        # > Our main home-manager configuration file <
+        pkgs = pkgs "x86_64-linux";
+	# > Our main home-manager configuration file <
         modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };
       "andre@nephelae" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;
-          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;};
-        # > Our main home-manager configuration file <
-        modules = [./home-manager/home.nix ./home-manager/linux.nix];
+        pkgs = pkgs "x86_64-linux";
+          # > Our main home-manager configuration file <
+          modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };
-      "andre@phoenix" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-darwin; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;
-          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-darwin;};
+      "adre@phoenix" = home-manager.lib.homeManagerConfiguration {
+
+        pkgs = pkgs "x86_64-darwin";
         # > Our main home-manager configuration file <
         modules = [
             catppuccin.homeManagerModules.catppuccin
@@ -118,9 +128,7 @@
         ];
       };
       "andre@kraken" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;
-          pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;};
+        pkgs = pkgs "x86_64-linux";
         # > Our main home-manager configuration file <
         modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };

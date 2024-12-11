@@ -1,4 +1,4 @@
-{ pkgs, pkgs-stable, config, lib, ... }:
+{ pkgs, config, lib, ... }:
 let
 
   treesitterWithGrammars = (pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
@@ -58,9 +58,12 @@ let
     result = lib.strings.removePrefix "lua5.1-" intermediate;
   in result;
 
-  pluginList = plugins: lib.strings.concatMapStrings (plugin: "  [\"${sanitizePluginName plugin.name}\"] = \"${plugin.outPath}\",\n") plugins;
+  pluginList = plugins: 
+    lib.strings.concatMapStrings
+      (plugin: "  [\"${sanitizePluginName plugin.name  }\"] = \"${plugin.outPath}\",\n") plugins;
   in
   {
+    
     home.packages = [
       pkgs.ripgrep
       pkgs.fzf
@@ -75,10 +78,11 @@ let
   
       # LSs
       #luajitPackages.lua-lsp
-      pkgs-stable.clojure-lsp
+      pkgs.clojure-lsp
       pkgs.ocamlPackages.ocaml-lsp
       pkgs.lua-language-server
       pkgs.rust-analyzer-unwrapped
+      
       #zls
     ];
   
@@ -88,10 +92,12 @@ let
       vimAlias = true;
       coc.enable = false;
       withNodeJs = true;
+      catppuccin.enable = false;
   
       plugins = [
         treesitterWithGrammars
         pkgs.vimPlugins.nvim-lspconfig
+        pkgs.vimPlugins.catppuccin-nvim
       ];
   
     };

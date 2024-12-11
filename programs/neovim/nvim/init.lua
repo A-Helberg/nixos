@@ -197,6 +197,17 @@ require("lazy").setup({
 	-- "gc" to comment visual regions/lines
 	{ "numToStr/Comment.nvim", opts = {} },
 
+	{
+		"catppuccin-nvim",
+		dir = require("lazy-nix-helper").get_plugin_path("catppuccin-nvim"),
+		config = function()
+			require("catppuccin").setup({
+				flavour = "mocha",
+			})
+			vim.cmd([[colorscheme catppuccin-mocha]])
+		end,
+	},
+
 	-- Clojure
 	{
 		"Olical/conjure",
@@ -239,33 +250,55 @@ require("lazy").setup({
 	{ -- Useful plugin to show you pending keybinds.
 		"folke/which-key.nvim",
 		event = "VimEnter", -- Sets the loading event to 'VimEnter'
-		config = function() -- This is the function that runs, AFTER loading
-			require("which-key").setup()
+		opts = {
+			icons = {
+				-- set icon mappings to true if you have a Nerd Font
+				mappings = vim.g.have_nerd_font,
+				-- If you are using a Nerd Font: set icons.keys to an empty table which will use the
+				-- default which-key.nvim defined Nerd Font icons, otherwise define a string table
+				keys = vim.g.have_nerd_font and {} or {
+					Up = "<Up> ",
+					Down = "<Down> ",
+					Left = "<Left> ",
+					Right = "<Right> ",
+					C = "<C-…> ",
+					M = "<M-…> ",
+					D = "<D-…> ",
+					S = "<S-…> ",
+					CR = "<CR> ",
+					Esc = "<Esc> ",
+					ScrollWheelDown = "<ScrollWheelDown> ",
+					ScrollWheelUp = "<ScrollWheelUp> ",
+					NL = "<NL> ",
+					BS = "<BS> ",
+					Space = "<Space> ",
+					Tab = "<Tab> ",
+					F1 = "<F1>",
+					F2 = "<F2>",
+					F3 = "<F3>",
+					F4 = "<F4>",
+					F5 = "<F5>",
+					F6 = "<F6>",
+					F7 = "<F7>",
+					F8 = "<F8>",
+					F9 = "<F9>",
+					F10 = "<F10>",
+					F11 = "<F11>",
+					F12 = "<F12>",
+				},
+			},
 
 			-- Document existing key chains
-			require("which-key").register({
-				["<leader>c"] = { name = "[C]ode", _ = "which_key_ignore" },
-				["<leader>d"] = { name = "[D]ocument", _ = "which_key_ignore" },
-				["<leader>r"] = { name = "[R]ename", _ = "which_key_ignore" },
-				["<leader>s"] = { name = "[S]earch", _ = "which_key_ignore" },
-				["<leader>w"] = { name = "[W]orkspace", _ = "which_key_ignore" },
-				["<leader>t"] = { name = "[T]oggle", _ = "which_key_ignore" },
-				["<leader>h"] = { name = "Git [H]unk", _ = "which_key_ignore" },
-
-				["<localleader>e"] = { name = "[E]valuate", _ = "which_key_ignore" },
-				["<localleader>c"] = { name = "[C]onnect", _ = "which_key_ignore" },
-				["<localleader>g"] = { name = "[G]oto", _ = "which_key_ignore" },
-				["<localleader>l"] = { name = "[L]og", _ = "which_key_ignore" },
-				["<localleader>r"] = { name = "[R]efresh", _ = "which_key_ignore" },
-				["<localleader>s"] = { name = "[S]ession", _ = "which_key_ignore" },
-				["<localleader>t"] = { name = "[T]est", _ = "which_key_ignore" },
-				["<localleader>v"] = { name = "[V]alue", _ = "which_key_ignore" },
-			})
-			-- visual mode
-			require("which-key").register({
-				["<leader>h"] = { "Git [H]unk" },
-			}, { mode = "v" })
-		end,
+			spec = {
+				{ "<leader>c", group = "[C]ode", mode = { "n", "x" } },
+				{ "<leader>d", group = "[D]ocument" },
+				{ "<leader>r", group = "[R]ename" },
+				{ "<leader>s", group = "[S]earch" },
+				{ "<leader>w", group = "[W]orkspace" },
+				{ "<leader>t", group = "[T]oggle" },
+				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+			},
+		},
 	},
 
 	-- NOTE: Plugins can specify dependencies.
@@ -580,9 +613,10 @@ require("lazy").setup({
 				},
 
 				clojure_lsp = {},
-				dart_ls = {},
-				ocamllsp = {},
 				zls = {},
+				-- needs a nix package
+				-- dart_ls = {},
+				-- camllsp = {},
 			}
 
 			if not require("lazy-nix-helper").mason_enabled() then
@@ -839,9 +873,11 @@ require("lazy").setup({
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
+		dir = require("lazy-nix-helper").get_plugin_path("nvim-treesitter"),
 		build = ":TSUpdate",
 		opts = {
-			ensure_installed = { "bash", "c", "diff", "html", "lua", "luadoc", "markdown", "vim", "vimdoc" },
+			-- Cannot ensure installed on nix
+			-- ensure_installed = { "bash", "c", "diff", "html", "lua", "luadoc", "markdown", "vim", "vimdoc" },
 			-- Autoinstall languages that are not installed
 			auto_install = true,
 			highlight = {

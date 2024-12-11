@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-stable, catppuccin, ... }:
+{ config, pkgs, catppuccin, ... }:
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -24,7 +24,6 @@
 
   programs.zsh = {
     enable = true;
-    # catppuccin.enable = true;
     shellAliases = {
       rrun = ''f() { ssh 10.253.0.1 tmux new -d -s remote 2>/dev/null || true;
                       ssh 10.253.0.1 tmux send-keys -t remote.0 "'cd $PWD && clear'" ENTER "'$*'" ENTER "'read -s -k \"?Press any key to continue.\" && tmux detach'" ENTER
@@ -50,16 +49,13 @@
 
     pkgs.kitty
 
+    # potentially used for port forwarding & dev domains
     pkgs.caddy
 
 
 
     pkgs.obsidian
 
-    pkgs.packer
-    pkgs.nomad
-    pkgs.sshpass
-    pkgs.websocat
 
     pkgs.realvnc-vnc-viewer
     # network tools
@@ -81,22 +77,29 @@
 
 
 
-    (pkgs.callPackage ./hv.nix {})
-    (pkgs.callPackage ./nomad-pack.nix {})
+    # move to dev-shell
+    #(pkgs.callPackage ./hv.nix {})
+    #(pkgs.callPackage ./nomad-pack.nix {})
 
     ## Dev
-    pkgs.oauth2c
-    pkgs.gnumake
-    pkgs.rustc
-    pkgs.cargo
-    pkgs.jq
-    pkgs.gcc
+    # all of these can be put in dev-shells
+    #pkgs.oauth2c
+    #pkgs.gnumake
+    #pkgs.rustc
+    #pkgs.gcc
+    #pkgs.cargo
+    #pkgs.packer
+    #pkgs.nomad
+    #pkgs.jq
+    #pkgs.sshpass
+    #pkgs.websocat
+    #pkgs.terraform
 
     ##pkgs.asdf-vm
 
+    # I use clojure nough to have it globally available
     pkgs.rlwrap
     pkgs.clojure
-    pkgs.terraform
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -106,8 +109,8 @@
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
-    (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-    #pkgs.nerd-fonts.jetbrains-mono
+    #(pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    pkgs.nerd-fonts.jetbrains-mono
 
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your
