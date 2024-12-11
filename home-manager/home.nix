@@ -120,12 +120,17 @@
   programs.wezterm.extraConfig = ''
     local config = wezterm.config_builder()
     config.front_end = "WebGpu"
+    config.enable_tab_bar = false
 
     return config
   '';
 
+  programs.starship.enable = true;
+
   imports = [
-    ../programs/neovim/default.nix
+    ../programs/neovim
+    ../programs/zsh
+    ../programs/starship
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

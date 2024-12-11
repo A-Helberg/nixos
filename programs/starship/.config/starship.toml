@@ -1,0 +1,42 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$username\
+$hostname\
+$localip\
+$shlvl\
+$singularity\
+$directory\
+$vcsh\
+$fossil_branch\
+$fossil_metrics\
+$pijul_channel\
+$docker_context\
+$package\
+$guix_shell\
+$opa\
+$quarto\
+$red\
+$solidity\
+$typst\
+$buf\
+$nix_shell\
+$spack\
+$memory_usage\
+$nats\
+$direnv\
+$env_var\
+$crystal\
+$custom\
+$sudo\
+$cmd_duration\
+$line_break\
+$jobs\
+$battery\
+$time\
+$status\
+$os\
+$container\
+$shell\
+$character"""
