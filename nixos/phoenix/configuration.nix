@@ -21,7 +21,6 @@
   # $ nix-env -qaP | grep wget
   environment.systemPackages =
     [ 
-      pkgs.neovim
       pkgs.mkalias
       pkgs.obsidian
       pkgs.tmux
@@ -46,6 +45,7 @@
       "docker"
       "virtualbox"
       "arc"
+      "nikitabobko/tap/aerospace"
     ];
     masApps = {
       "Slack" = 803453959;
@@ -54,20 +54,20 @@
     };
     onActivation.cleanup = "zap";
   };
-    nix.extraOptions = ''
-      auto-optimise-store = true
-      experimental-features = nix-command flakes
-      extra-platforms = x86_64-darwin aarch64-darwin
-    '';
+  nix.extraOptions = ''
+    auto-optimise-store = true
+    experimental-features = nix-command flakes
+    extra-platforms = x86_64-darwin aarch64-darwin
+  '';
 
-    #  programs.nh = {
-    #    enable = true;
+    #programs.nh = {
+        #enable = true;
     #    clean.enable = true;
     #    # Installation option once https://github.com/LnL7/nix-darwin/pull/942 is merged:
     #    #package = inputs.nh_darwin.packages.${pkgs.stdenv.hostPlatform.system}.default;
     #    os.flake = "/Users/andre/nixos";
     #    home.flake = "/Users/andre/nixos";
-    #  };
+    #};
 
       system.activationScripts.applications.text = let
           env = pkgs.buildEnv {
@@ -181,38 +181,38 @@
             location = "~/screenshots";
             type = "png";
           };
-          "com.apple.Safari" = {
-            # Privacy: don’t send search queries to Apple
-            UniversalSearchEnabled = false;
-            SuppressSearchSuggestions = true;
-            # Press Tab to highlight each item on a web page
-            WebKitTabToLinksPreferenceKey = true;
-            ShowFullURLInSmartSearchField = true;
-            # Prevent Safari from opening ‘safe’ files automatically after downloading
-            AutoOpenSafeDownloads = false;
-            ShowFavoritesBar = false;
-            IncludeInternalDebugMenu = true;
-            IncludeDevelopMenu = true;
-            WebKitDeveloperExtrasEnabledPreferenceKey = true;
-            WebContinuousSpellCheckingEnabled = true;
-            WebAutomaticSpellingCorrectionEnabled = false;
-            AutoFillFromAddressBook = false;
-            AutoFillCreditCardData = false;
-            AutoFillMiscellaneousForms = false;
-            WarnAboutFraudulentWebsites = true;
-            WebKitJavaEnabled = false;
-            WebKitJavaScriptCanOpenWindowsAutomatically = false;
-            "com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks" = true;
-            "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" = true;
-            "com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled" = false;
-            "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabled" = false;
-            "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabledForLocalFiles" = false;
-            "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically" = false;
-          };
-          "com.apple.mail" = {
-            # Disable inline attachments (just show the icons)
-            DisableInlineAttachmentViewing = true;
-          };
+         # "com.apple.Safari" = {
+         #   # Privacy: don’t send search queries to Apple
+         #   UniversalSearchEnabled = false;
+         #   SuppressSearchSuggestions = true;
+         #   # Press Tab to highlight each item on a web page
+         #   WebKitTabToLinksPreferenceKey = true;
+         #   ShowFullURLInSmartSearchField = true;
+         #   # Prevent Safari from opening ‘safe’ files automatically after downloading
+         #   AutoOpenSafeDownloads = false;
+         #   ShowFavoritesBar = false;
+         #   IncludeInternalDebugMenu = true;
+         #   IncludeDevelopMenu = true;
+         #   WebKitDeveloperExtrasEnabledPreferenceKey = true;
+         #   WebContinuousSpellCheckingEnabled = true;
+         #   WebAutomaticSpellingCorrectionEnabled = false;
+         #   AutoFillFromAddressBook = false;
+         #   AutoFillCreditCardData = false;
+         #   AutoFillMiscellaneousForms = false;
+         #   WarnAboutFraudulentWebsites = true;
+         #   WebKitJavaEnabled = false;
+         #   WebKitJavaScriptCanOpenWindowsAutomatically = false;
+         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks" = true;
+         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" = true;
+         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled" = false;
+         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabled" = false;
+         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabledForLocalFiles" = false;
+         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically" = false;
+         # };
+        #  "com.apple.mail" = {
+        #    # Disable inline attachments (just show the icons)
+        #    DisableInlineAttachmentViewing = true;
+        #  };
           "com.apple.AdLib" = {
             allowApplePersonalizedAdvertising = false;
           };

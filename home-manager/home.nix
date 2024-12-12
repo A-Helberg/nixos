@@ -70,7 +70,6 @@
     pkgs.starship
     pkgs.eza
     pkgs.bat
-    pkgs.tmux
     pkgs.slack
     #pkgs-stable.ncdu
     pkgs.killall
@@ -127,6 +126,7 @@
     ../programs/zsh
     ../programs/starship
     ../programs/wezterm
+    ../programs/tmux
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -160,9 +160,6 @@
   #
   #  /etc/profiles/per-user/andre/etc/profile.d/hm-session-vars.sh
   #
-  home.sessionVariables = {
-    EDITOR = "nvim";
-  };
 
   programs.git = {
     enable = true;

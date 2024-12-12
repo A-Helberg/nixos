@@ -33,6 +33,10 @@ let
     p.zig
   ]));
 
+  home.sessionVariables = {
+    EDITOR = "nvim";
+  };
+
   treesitter-parsers = pkgs.symlinkJoin {
     name = "treesitter-parsers";
     paths = treesitterWithGrammars.dependencies;
@@ -92,6 +96,7 @@ let
       vimAlias = true;
       coc.enable = false;
       withNodeJs = true;
+      # We manually enable it in the lua config
       catppuccin.enable = false;
   
       plugins = [
