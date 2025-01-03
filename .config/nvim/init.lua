@@ -881,8 +881,9 @@ require("lazy").setup({
 		opts = {
 			-- Cannot ensure installed on nix
 			-- ensure_installed = { "bash", "c", "diff", "html", "lua", "luadoc", "markdown", "vim", "vimdoc" },
-			-- Autoinstall languages that are not installed
-			auto_install = true,
+			-- Do Not auto install languages that are not installed
+			-- we manage langs via nix
+			auto_install = false,
 			highlight = {
 				enable = true,
 				-- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.

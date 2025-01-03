@@ -42,7 +42,7 @@ let
     paths = treesitterWithGrammars.dependencies;
   };
 
-  lazy-nix-ref = "63b20ed071647bb492ed3256fbda709e4bfedc45";
+  lazy-nix-ref = "cb1c0c4cf0ab3c1a2227dcf24abd3e430a8a9cd8";
   lazy-nix-sha = "sha256-TBDZGj0NXkWvJZJ5ngEqbhovf6RPm9N+Rmphz92CS3Q" ;
 
   lazy-nix-helper-nvim = pkgs.vimUtils.buildVimPlugin {
@@ -89,6 +89,8 @@ let
       
       #zls
     ];
+
+    catppuccin.nvim.enable = false;
   
     programs.neovim = {
       enable = true;
@@ -97,7 +99,6 @@ let
       coc.enable = false;
       withNodeJs = true;
       # We manually enable it in the lua config
-      catppuccin.enable = false;
   
       plugins = [
         treesitterWithGrammars
