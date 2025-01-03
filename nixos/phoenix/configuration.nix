@@ -19,6 +19,7 @@
   nixpkgs.config.allowUnfree = true;
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
+
   environment.systemPackages =
     [ 
       pkgs.mkalias
@@ -121,7 +122,7 @@
       system.stateVersion = 5;
 
       # The platform the configuration will be used on.
-      nixpkgs.hostPlatform = "x86_64-darwin";
+      nixpkgs.hostPlatform = "aarch64-darwin";
 
     system.activationScripts.postUserActivation.text = ''
       # Following line should allow us to avoid a logout/login cycle
@@ -136,15 +137,16 @@
         # Do not automatically re-arrange spaces to most recent
         dock = {
           mru-spaces = false;
-          #autohide  = true;
-          #largesize = 64;
-          #persistent-apps = [
+          autohide  = true;
+          largesize = 64;
+          persistent-apps = [
+            "${pkgs.wezterm}/Applications/Wezterm.app"
           #  "${pkgs.alacritty}/Applications/Alacritty.app"
           #  "/Applications/Firefox.app"
           #  "${pkgs.obsidian}/Applications/Obsidian.app"
           #  "/System/Applications/Mail.app"
           #  "/System/Applications/Calendar.app"
-          #];
+          ];
         };
 
         #finder.FXPreferredViewStyle = "clmv";

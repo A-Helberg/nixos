@@ -150,10 +150,11 @@ let
       '';
       };
   
-    xdg.configFile."nvim/init.lua" = {
-      source = ./nvim/init.lua;
-      recursive = true;
-    };
+    # Handled by stow
+    # xdg.configFile."nvim/init.lua" = {
+    #   source = ./nvim/init.lua;
+    #   recursive = true;
+    # };
   
   #  home.file."./.config/nvim/lua/kidsan/init.lua".text = ''
   #    require("kidsan.set")

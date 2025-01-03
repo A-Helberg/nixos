@@ -42,6 +42,7 @@
 
   home.packages = [
     pkgs.htop
+    pkgs.stow
 
     # git tools
     pkgs.git

@@ -12,10 +12,11 @@ in
     '';
   };
 
-  xdg.configFile."zsh/zshrc" = {
-    source = ./.config/zshrc;
-    recursive = true;
-  };
+  # Managed by stow
+  #xdg.configFile."zsh/zshrc" = {
+  #  source = ./.config/zshrc;
+  #  recursive = true;
+  #};
 }
 
 # Debugging

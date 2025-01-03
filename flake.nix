@@ -83,8 +83,9 @@
       phoenix = nix-darwin.lib.darwinSystem {
         specialArgs = {
           inherit inputs outputs ;
+          system = "aarch-darwin";
         };
-        system = "x86_64-darwin";
+        system = "aarch-darwin";
         #pkgs = pkgs "x86_64-darwin";
         modules = [
           ./nixos/phoenix/configuration.nix
@@ -95,7 +96,7 @@
             nix-homebrew = {
               enable = true;
               # Apple Silicon Only
-              # enableRosetta = true;
+              enableRosetta = true;
               # User owning the Homebrew prefix
               user = "andre";
             };
@@ -119,7 +120,7 @@
       };
       "andre@phoenix" = home-manager.lib.homeManagerConfiguration {
 
-        pkgs = pkgs "x86_64-darwin";
+        pkgs = pkgs "aarch64-darwin";
         # > Our main home-manager configuration file <
         modules = [
             catppuccin.homeManagerModules.catppuccin
