@@ -6,8 +6,9 @@ in
     pkgs.tmux
   ];
 
-  xdg.configFile."tmux" = {
-    source = ./.config/tmux;
-    recursive = true;
-  };
+# Managed by stow
+#  xdg.configFile."tmux" = {
+#    source = ./.config/tmux;
+#    recursive = true;
+#  };
 }
