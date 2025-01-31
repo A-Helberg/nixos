@@ -39,6 +39,7 @@
     casks = [
       "hammerspoon"
       "firefox"
+      "chromium"
       "iina"
       "the-unarchiver"
       "1Password"
@@ -47,6 +48,7 @@
       "virtualbox"
       "arc"
       "nikitabobko/tap/aerospace"
+      "little-snitch"
     ];
     masApps = {
       "Slack" = 803453959;

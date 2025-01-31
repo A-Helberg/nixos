@@ -79,19 +79,20 @@ let
       # clipboard support
       pkgs.wl-clipboard
       pkgs.ocaml
-  
+
       # LSs
       #luajitPackages.lua-lsp
       pkgs.clojure-lsp
       pkgs.ocamlPackages.ocaml-lsp
       pkgs.lua-language-server
       pkgs.rust-analyzer-unwrapped
-      
+      pkgs.typescript-language-server
+
       #zls
     ];
 
     catppuccin.nvim.enable = false;
-  
+
     programs.neovim = {
       enable = true;
       package = pkgs.neovim-unwrapped;
@@ -99,15 +100,15 @@ let
       coc.enable = false;
       withNodeJs = true;
       # We manually enable it in the lua config
-  
+
       plugins = [
         treesitterWithGrammars
         pkgs.vimPlugins.nvim-lspconfig
         pkgs.vimPlugins.catppuccin-nvim
       ];
-  
+
     };
-  
+
     xdg.configFile."nvim/lua/nixos.lua" = {
       text = ''
         local plugins = {

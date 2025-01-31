@@ -598,6 +598,7 @@ require("lazy").setup({
 				--
 				-- But for many setups, the LSP (`tsserver`) will work just fine
 				-- tsserver = {},
+				ts_ls = {},
 				--
 
 				lua_ls = {
@@ -616,6 +617,7 @@ require("lazy").setup({
 				},
 
 				clojure_lsp = {},
+
 				zls = {},
 				-- needs a nix package
 				-- dart_ls = {},

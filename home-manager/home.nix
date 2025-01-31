@@ -166,6 +166,10 @@
     enable = true;
     userName = "Andre Helberg";
     userEmail = "helberg.andre@gmail.com";
+    ignores = [
+       ".DS_Store"
+       ".idea"
+    ];
   };
 
   # Let Home Manager install and manage itself.
