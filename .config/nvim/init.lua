@@ -13,7 +13,7 @@ vim.keymap.set("n", "<localleader>x", function()
 			vim.cmd.ConjureConnect()
 		elseif string.find(input, ":") or string.find(input, " ") then
 			local h, p = string.match(input, "([%w.]+)[:%s](%d+)")
-			vim.cmd.echo("'connecting to " .. h .. "on " .. p .. "'")
+			vim.cmd.echo("'connecting to " .. h .. " on " .. p .. "'")
 			vim.cmd.ConjureConnect(h, p)
 		else
 			vim.ui.input({ prompt = "Port to conect to: " }, function(port)
@@ -300,6 +300,16 @@ require("lazy").setup({
 				{ "<leader>w", group = "[W]orkspace" },
 				{ "<leader>t", group = "[T]oggle" },
 				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+
+				{ "<localleader>c", group = "[C]onnection", mode = { "n" } },
+				{ "<localleader>e", group = "[E]valuate", mode = { "n" } },
+				{ "<localleader>g", group = "[G]et", mode = { "n" } },
+				{ "<localleader>l", group = "[L]og", mode = { "n" } },
+				{ "<localleader>r", group = "[R]efresh", mode = { "n" } },
+				{ "<localleader>s", group = "[S]ession", mode = { "n" } },
+				{ "<localleader>t", group = "[T]est", mode = { "n" } },
+				{ "<localleader>v", group = "[V]alue", mode = { "n" } },
+				{ "<localleader>t", group = "[T]est", mode = { "n" } },
 			},
 		},
 	},
