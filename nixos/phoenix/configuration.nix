@@ -49,6 +49,7 @@
       "arc"
       "nikitabobko/tap/aerospace"
       "little-snitch"
+      "ghostty"
     ];
     masApps = {
       "Slack" = 803453959;
@@ -142,7 +143,7 @@
           autohide  = true;
           largesize = 64;
           persistent-apps = [
-            "${pkgs.wezterm}/Applications/Wezterm.app"
+            "/Applications/Ghostty.app"
           #  "${pkgs.alacritty}/Applications/Alacritty.app"
           #  "/Applications/Firefox.app"
           #  "${pkgs.obsidian}/Applications/Obsidian.app"
