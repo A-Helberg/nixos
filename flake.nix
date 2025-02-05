@@ -13,32 +13,37 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-darwin.url = "github:LnL7/nix-darwin";
+    nix-helper.url = "github:viperML/nh";
+
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     catppuccin.url = "github:catppuccin/nix";
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-homebrew, catppuccin, ... }@inputs: 
+  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-homebrew, catppuccin, nix-helper, ... }@inputs: 
   let 
     inherit (self) outputs;
-      #systems = ["x86_64-linux" "x86_64-darwin"];
 
     # https://github.com/paholg/dotfiles/blob/main/flake.nix
     pkgs_overlay = final: prev: {
-      vimPlugins = prev.vimPlugins // {
-        catppuccin = prev.vimPlugins.catppuccin.overrideAttrs (oldAttrs: {
-          name = "catppuccin-nvim-theme";
-        });
-      };
+      #vimPlugins = prev.vimPlugins // {
+      #  catppuccin = prev.vimPlugins.catppuccin.overrideAttrs (oldAttrs: {
+      #    name = "catppuccin-nvim-theme";
+      #  });
+      #};
+
+    };
+
+    nh_overlay = final: prev: {
+      nh = inputs.nix-helper.packages.${prev.system}.default;
     };
 
     pkgs = system:
       import inputs.nixpkgs {
-        #overlays = [
-        #  pkgs_overlay
-        #];
         inherit system;
+        overlays = [
+          nh_overlay
+        ];
         # FIXME
         config.allowUnfree = true;
       };
@@ -86,8 +91,9 @@
           system = "aarch-darwin";
         };
         system = "aarch-darwin";
-        #pkgs = pkgs "x86_64-darwin";
+        
         modules = [
+          { nixpkgs.pkgs = pkgs "aarch64-darwin"; }
           ./nixos/phoenix/configuration.nix
           # does not work becuase grub?
           #catppuccin.nixosModules.catppuccin
@@ -95,10 +101,8 @@
           {
             nix-homebrew = {
               enable = true;
-              # Apple Silicon Only
-              enableRosetta = true;
-              # User owning the Homebrew prefix
-              user = "andre";
+              enableRosetta = true; # Apple Silicon Only
+              user = "andre"; # User owning the Homebrew prefix
             };
           }
         ];
@@ -110,7 +114,7 @@
     homeConfigurations = {
       "andre@HBD" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "x86_64-linux";
-	# > Our main home-manager configuration file <
+	      # > Our main home-manager configuration file <
         modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };
       "andre@nephelae" = home-manager.lib.homeManagerConfiguration {
@@ -119,7 +123,6 @@
           modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };
       "andre@phoenix" = home-manager.lib.homeManagerConfiguration {
-
         pkgs = pkgs "aarch64-darwin";
         # > Our main home-manager configuration file <
         modules = [
