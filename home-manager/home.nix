@@ -29,15 +29,10 @@
                       ssh 10.253.0.1 tmux send-keys -t remote.0 "'cd $PWD && clear'" ENTER "'$*'" ENTER "'read -s -k \"?Press any key to continue.\" && tmux detach'" ENTER
                       ssh -tt 10.253.0.1 tmux attach -t remote.0 };f'';
     };
-  };
 
-
-  programs.kitty = pkgs.lib.mkForce {
-    enable = true;
-    settings = {
-      shell = "${pkgs.zsh}/bin/zsh";
+    sessionVariables = {
+      EDITOR = "nvim";
     };
-
   };
 
   home.packages = [
@@ -47,8 +42,6 @@
     # git tools
     pkgs.git
     pkgs.gitui
-
-    pkgs.kitty
 
     # potentially used for port forwarding & dev domains
     pkgs.caddy

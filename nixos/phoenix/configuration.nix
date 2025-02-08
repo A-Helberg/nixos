@@ -43,7 +43,6 @@
       "iina"
       "the-unarchiver"
       "1Password"
-      "kitty"
       "docker"
       "virtualbox"
       "arc"

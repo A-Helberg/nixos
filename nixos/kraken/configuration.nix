@@ -178,6 +178,7 @@
   environment.sessionVariables  = {
     # So that we don't have to specify this to nh os switch
     FLAKE = "/etc/nixos";
+    NH_FLAKE = "/etc/nixos";
   };
 
 

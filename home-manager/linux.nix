@@ -102,7 +102,7 @@
           "notification-position@drugo.dev"
           "pkgs.gnomeExtensions.espresso"
         ];
-        favorite-apps = ["firefox.desktop" "kitty.desktop"];
+        favorite-apps = ["firefox.desktop"];
         had-bluetooth-devices-setup = true;
         remember-mount-password = false;
         welcome-dialog-last-shown-version = "42.4";

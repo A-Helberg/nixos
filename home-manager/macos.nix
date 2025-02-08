@@ -4,4 +4,9 @@
   # manage.
   home.homeDirectory = "/Users/andre";
 
+  programs.zsh.sessionVariables = {
+    FLAKE="~/nixos";
+    NH_FLAKE="~/nixos";
+  };
+
 }
