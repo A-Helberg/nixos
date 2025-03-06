@@ -49,6 +49,7 @@
       "nikitabobko/tap/aerospace"
       "little-snitch"
       "ghostty"
+      "raycast"
     ];
     masApps = {
       "Slack" = 803453959;

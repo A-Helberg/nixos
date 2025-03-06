@@ -200,6 +200,8 @@ require("lazy").setup({
 	-- "gc" to comment visual regions/lines
 	{ "numToStr/Comment.nvim", opts = {} },
 
+	{ "ggml-org/llama.vim" },
+
 	{
 		"catppuccin-nvim",
 		dir = require("lazy-nix-helper").get_plugin_path("catppuccin-nvim"),
