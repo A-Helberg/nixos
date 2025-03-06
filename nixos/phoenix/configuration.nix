@@ -35,6 +35,7 @@
       "mas"
       "tailscale"
       "iproute2mac"
+      "llama.cpp"
     ];
     casks = [
       "hammerspoon"

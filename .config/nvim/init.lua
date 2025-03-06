@@ -185,6 +185,20 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 --
 -- NOTE: Here is where you install your plugins.
 require("lazy").setup({
+	-- Better File explorer
+	-- https://github.com/stevearc/oil.nvim
+	{
+		"stevearc/oil.nvim",
+		---@module 'oil'
+		---@type oil.SetupOpts
+		opts = {},
+		-- Optional dependencies
+		dependencies = { { "echasnovski/mini.icons", opts = {} } },
+		-- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+		-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+		lazy = false,
+	},
+
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
@@ -612,6 +626,7 @@ require("lazy").setup({
 				-- tsserver = {},
 				ts_ls = {},
 				--
+				terraformls = {},
 
 				lua_ls = {
 					-- cmd = {...},

@@ -28,6 +28,7 @@ let
     p.rust
     p.toml
     p.typescript
+    p.terraform
     p.vue
     p.yaml
     p.zig
