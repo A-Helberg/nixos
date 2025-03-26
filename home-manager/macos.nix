@@ -5,8 +5,7 @@
   home.homeDirectory = "/Users/andre";
 
   programs.zsh.sessionVariables = {
-    FLAKE="~/nixos";
-    NH_FLAKE="~/nixos";
+    NH_FLAKE="nixos";
   };
 
 }

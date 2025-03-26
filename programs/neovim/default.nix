@@ -89,6 +89,8 @@ let
       pkgs.rust-analyzer-unwrapped
       pkgs.typescript-language-server
 
+      pkgs.nodejs
+
       #zls
     ];
 

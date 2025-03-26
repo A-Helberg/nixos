@@ -185,6 +185,25 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 --
 -- NOTE: Here is where you install your plugins.
 require("lazy").setup({
+	{
+		"nvim-orgmode/orgmode",
+		event = "VeryLazy",
+		ft = { "org" },
+		config = function()
+			-- Setup orgmode
+			require("orgmode").setup({
+				org_agenda_files = "~/orgfiles/**/*",
+				org_default_notes_file = "~/orgfiles/refile.org",
+			})
+
+			-- NOTE: If you are using nvim-treesitter with ~ensure_installed = "all"~ option
+			-- add ~org~ to ignore_install
+			-- require('nvim-treesitter.configs').setup({
+			--   ensure_installed = 'all',
+			--   ignore_install = { 'org' },
+			-- })
+		end,
+	},
 	-- Better File explorer
 	-- https://github.com/stevearc/oil.nvim
 	{
@@ -197,6 +216,10 @@ require("lazy").setup({
 		-- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
 		-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
 		lazy = false,
+	},
+
+	{
+		"github/copilot.vim",
 	},
 
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
