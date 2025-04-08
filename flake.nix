@@ -20,7 +20,7 @@
     catppuccin.url = "github:catppuccin/nix";
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-homebrew, catppuccin, nix-helper, ... }@inputs: 
+  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-homebrew, catppuccin, nix-helper, nixpkgs-bleeding, ... }@inputs: 
   let 
     inherit (self) outputs;
 
@@ -48,6 +48,16 @@
         config.allowUnfree = true;
       };
 
+    pkgs-bleeding = system:
+      import inputs.nixpkgs-bleeding {
+        inherit system;
+        overlays = [
+          nh_overlay
+        ];
+        # FIXME
+        config.allowUnfree = true;
+      };
+
   in
   {
 
@@ -60,6 +70,16 @@
 
         modules = [
           ./nixos/HBD/configuration.nix
+        ];
+      };
+      demo = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs outputs;
+        };
+
+        modules = [
+          ./nixos/demo/configuration.nix
         ];
       };
       nephelae = nixpkgs.lib.nixosSystem {
@@ -76,6 +96,7 @@
         system = "x86_64-linux";
         specialArgs = {
           inherit inputs outputs;
+          pkgs-bleeding = pkgs-bleeding "x86_64-linux";
         };
 
         modules = [
@@ -112,6 +133,11 @@
     #darwinPackages = self.darwinConfigurations.phoenix.pkgs;
 
     homeConfigurations = {
+      "andre@demo" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgs "x86_64-linux";
+	      # > Our main home-manager configuration file <
+        modules = [./home-manager/home.nix ./home-manager/linux.nix];
+      };
       "andre@HBD" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "x86_64-linux";
 	      # > Our main home-manager configuration file <
