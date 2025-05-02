@@ -7,9 +7,15 @@ in
 
   programs.zsh = {
     enable = true;
+
+    shellAliases = {
+      nps = "cat package.json | jq .scripts";
+    };
+
     initExtra = ''
       source ~/.config/zsh/zshrc
-      . "$HOME/.asdf/asdf.sh"
+      export ASDF_FORCE_PREPEND="no"
+      export PATH="$PATH:$HOME/.asdf/shims:$HOME/.asdf/bin"
     '';
   };
 

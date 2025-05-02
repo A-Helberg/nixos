@@ -43,6 +43,8 @@
     pkgs.git
     pkgs.gitui
 
+    pkgs.go-task
+
     # potentially used for port forwarding & dev domains
     pkgs.caddy
 
@@ -67,6 +69,8 @@
     pkgs.slack
     #pkgs-stable.ncdu
     pkgs.killall
+
+    pkgs.kubectl
 
 
 

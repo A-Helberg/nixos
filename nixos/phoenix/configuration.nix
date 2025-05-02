@@ -16,7 +16,6 @@
     # ./common/aerospace.nix
   ];
   networking.hostName = "phoenix"; # Define your hostname.
-  nixpkgs.config.allowUnfree = true;
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
 
@@ -36,8 +35,11 @@
       "tailscale"
       "iproute2mac"
       "llama.cpp"
+      "btop"
+      "websocat"
     ];
     casks = [
+      "leader-key"
       "hammerspoon"
       "firefox"
       "chromium"
@@ -51,6 +53,7 @@
       "little-snitch"
       "ghostty"
       "raycast"
+      "visual-studio-code"
     ];
     masApps = {
       "Slack" = 803453959;
@@ -110,7 +113,6 @@
 
       # Auto upgrade nix package and the daemon service.
       services = {
-        nix-daemon.enable = true;
         tailscale.enable = true;
       };
       # nix.package = pkgs.nix;
