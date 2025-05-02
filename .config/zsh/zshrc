@@ -20,6 +20,11 @@ alias mystow='stow -d $HOME/nixos/ -t $HOME/.config .config'
 
 alias tf='terraform'
 
+
+function backup(){
+  cp $1 $1.bak
+}
+
 # Outputs the name of the current branch
 # Usage example: git pull origin $(git_current_branch)
 # Using '--quiet' with 'symbolic-ref' will not cause a fatal error (128) if
@@ -54,3 +59,9 @@ function gploc {
 
 alias gbsm='git branch --merged | egrep -v "(^\*|master|dev)"'
 alias gbdm='git branch --merged | egrep -v "(^\*|master|dev)" | xargs git branch -d'
+
+if [ -f "$HOME/.cargo/env" ]; then
+  # shellcheck disable=SC1090
+  # shellcheck source=/dev/null
+  . "$HOME/.cargo/env"
+fi
