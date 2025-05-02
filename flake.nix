@@ -72,16 +72,6 @@
           ./nixos/HBD/configuration.nix
         ];
       };
-      demo = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs outputs;
-        };
-
-        modules = [
-          ./nixos/demo/configuration.nix
-        ];
-      };
       nephelae = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
