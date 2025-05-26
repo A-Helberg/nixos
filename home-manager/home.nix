@@ -92,7 +92,7 @@
     #pkgs.websocat
     #pkgs.terraform
 
-    ##pkgs.asdf-vm
+    pkgs.asdf-vm
 
     # I use clojure nough to have it globally available
     pkgs.rlwrap

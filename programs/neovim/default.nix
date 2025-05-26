@@ -44,7 +44,7 @@ let
   };
 
   lazy-nix-ref = "cb1c0c4cf0ab3c1a2227dcf24abd3e430a8a9cd8";
-  lazy-nix-sha = "sha256-TBDZGj0NXkWvJZJ5ngEqbhovf6RPm9N+Rmphz92CS3Q" ;
+  lazy-nix-sha = "sha256-HwrO32Sj1FUWfnOZQYQ4yVgf/TQZPw0Nl+df/j0Jhbc=";
 
   lazy-nix-helper-nvim = pkgs.vimUtils.buildVimPlugin {
     name = "lazy-nix-helper.nvim";
