@@ -19,9 +19,6 @@
   catppuccin.enable = true;
   catppuccin.flavor = "mocha";
 
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
-
   programs.zsh = {
     enable = true;
     shellAliases = {
@@ -35,6 +32,8 @@
     };
   };
 
+  # The home.packages option allows you to install Nix packages into your
+  # environment.
   home.packages = [
     pkgs.htop
     pkgs.stow
@@ -48,10 +47,7 @@
     # potentially used for port forwarding & dev domains
     pkgs.caddy
 
-
-
     pkgs.obsidian
-
 
     pkgs.realvnc-vnc-viewer
     # network tools
@@ -123,7 +119,6 @@
     ../programs/neovim
     ../programs/zsh
     ../programs/starship
-    ../programs/wezterm
     ../programs/tmux
   ];
 

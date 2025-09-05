@@ -1,6 +1,15 @@
 # Prompt
 eval "$(starship init zsh)"
 
+alias dc="docker compose"
+
+if [[ -f "$HOME/.asdf/asdf.sh" ]]; then
+  . "$HOME/.asdf/asdf.sh"
+fi
+
+if [[ -f "$HOME/.opam/opam-init/init.zsh" ]]; then
+  eval $(opam env)
+fi
 
 # RipGrep
 alias rg="rg --hidden"

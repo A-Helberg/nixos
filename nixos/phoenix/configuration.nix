@@ -20,12 +20,14 @@
   # $ nix-env -qaP | grep wget
   system.primaryUser = "andre";
 
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
   environment.systemPackages =
     [ 
       pkgs.mkalias
       pkgs.obsidian
       pkgs.tmux
-      pkgs.wezterm
       pkgs.nh
     ];
 
@@ -38,6 +40,9 @@
       "llama.cpp"
       "btop"
       "websocat"
+      "glfw"
+      #"jank"
+      #"only-switch"
     ];
     casks = [
       "choosy"
