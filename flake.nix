@@ -118,6 +118,28 @@
           }
         ];
       };
+      "Zane's MacBook Air (2)" = nix-darwin.lib.darwinSystem {
+        specialArgs = {
+          inherit inputs outputs ;
+          system = "aarch-darwin";
+        };
+        system = "aarch-darwin";
+        
+        modules = [
+          { nixpkgs.pkgs = pkgs "aarch64-darwin"; }
+          ./nixos/zane/configuration.nix
+          # does not work becuase grub?
+          #catppuccin.nixosModules.catppuccin
+          nix-homebrew.darwinModules.nix-homebrew
+          {
+            nix-homebrew = {
+              enable = true;
+              enableRosetta = true; # Apple Silicon Only
+              user = "andre"; # User owning the Homebrew prefix
+            };
+          }
+        ];
+      };
     };
 
     #darwinPackages = self.darwinConfigurations.phoenix.pkgs;
@@ -139,6 +161,15 @@
           modules = [./home-manager/home.nix ./home-manager/linux.nix];
       };
       "andre@phoenix" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgs "aarch64-darwin";
+        # > Our main home-manager configuration file <
+        modules = [
+            catppuccin.homeManagerModules.catppuccin
+            ./home-manager/home.nix
+            ./home-manager/macos.nix
+        ];
+      };
+      "andre@Zane's MacBook Air (2)" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "aarch64-darwin";
         # > Our main home-manager configuration file <
         modules = [
