@@ -41,12 +41,11 @@
 
     # git tools
     pkgs.git
-    #pkgs.gitui
 
     pkgs.go-task
 
     # potentially used for port forwarding & dev domains
-    pkgs.caddy
+    #pkgs.caddy
 
 
 

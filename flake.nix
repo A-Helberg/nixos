@@ -16,6 +16,8 @@
     nix-helper.url = "github:viperML/nh";
 
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nix-darwin.url = "github:nix-darwin/nix-darwin";
+
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     catppuccin.url = "github:catppuccin/nix";
   };
