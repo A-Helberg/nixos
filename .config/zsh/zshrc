@@ -1,6 +1,11 @@
 # Prompt
 eval "$(starship init zsh)"
 
+# asdf
+ASDF_BIN=$(dirname $(readlink $(which asdf)))
+ASDF_SOURCE_PATH=$(realpath "$ASDF_BIN/../share/asdf-vm/asdf.sh")
+source "$ASDF_SOURCE_PATH"
+
 
 # RipGrep
 alias rg="rg --hidden"
