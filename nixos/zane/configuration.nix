@@ -15,7 +15,8 @@
     # ./common/sketchybar.nix
     # ./common/aerospace.nix
   ];
-  networking.hostName = "Zane's MacBook Air (2)"; # Define your hostname.
+  nix.enable = false;
+  networking.hostName = "Zanes-MacBook-Air-2"; # Define your hostname.
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   system.primaryUser = "andre";
@@ -48,10 +49,10 @@
       "iina"
       "the-unarchiver"
       "1Password"
-      "docker"
-      "virtualbox"
+      "orbstack"
       "arc"
-      "nikitabobko/tap/aerospace"
+      #"nikitabobko/tap"
+      #"nikitabobko/tap/aerospace"
       "little-snitch"
       "ghostty"
       "raycast"
@@ -132,10 +133,10 @@
       # The platform the configuration will be used on.
       nixpkgs.hostPlatform = "aarch64-darwin";
 
-    system.activationScripts.postUserActivation.text = ''
-      # Following line should allow us to avoid a logout/login cycle
-      /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-    '';
+    #system.activationScripts.postUserActivation.text = ''
+    #  # Following line should allow us to avoid a logout/login cycle
+    #  /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+    #'';
 
      system.defaults = {
         trackpad.TrackpadThreeFingerDrag = true;

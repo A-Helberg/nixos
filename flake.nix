@@ -118,7 +118,8 @@
           }
         ];
       };
-      "Zane's MacBook Air (2)" = nix-darwin.lib.darwinSystem {
+
+      "Zanes-MacBook-Air-2" = nix-darwin.lib.darwinSystem {
         specialArgs = {
           inherit inputs outputs ;
           system = "aarch-darwin";
@@ -164,16 +165,16 @@
         pkgs = pkgs "aarch64-darwin";
         # > Our main home-manager configuration file <
         modules = [
-            catppuccin.homeManagerModules.catppuccin
+            catppuccin.homeModules.catppuccin
             ./home-manager/home.nix
             ./home-manager/macos.nix
         ];
       };
-      "andre@Zane's MacBook Air (2)" = home-manager.lib.homeManagerConfiguration {
+      "andre@Zanes-MacBook-Air-2" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "aarch64-darwin";
         # > Our main home-manager configuration file <
         modules = [
-            catppuccin.homeManagerModules.catppuccin
+            catppuccin.homeModules.catppuccin
             ./home-manager/home.nix
             ./home-manager/macos.nix
         ];

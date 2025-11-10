@@ -41,7 +41,7 @@
 
     # git tools
     pkgs.git
-    pkgs.gitui
+    #pkgs.gitui
 
     pkgs.go-task
 
@@ -161,8 +161,10 @@
 
   programs.git = {
     enable = true;
-    userName = "Andre Helberg";
-    userEmail = "helberg.andre@gmail.com";
+    settings.user = {
+    name = "Andre Helberg";
+    email = "helberg.andre@gmail.com";
+};
     ignores = [
        ".DS_Store"
        ".idea"

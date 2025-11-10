@@ -77,14 +77,12 @@ let
       pkgs.stylua
       # needed to install lsp's
       pkgs.unzip
-      # clipboard support
-      pkgs.wl-clipboard
-      pkgs.ocaml
+      #pkgs.ocaml
 
       # LSs
       #luajitPackages.lua-lsp
       pkgs.clojure-lsp
-      pkgs.ocamlPackages.ocaml-lsp
+      #pkgs.ocamlPackages.ocaml-lsp
       pkgs.lua-language-server
       pkgs.rust-analyzer-unwrapped
       pkgs.typescript-language-server
@@ -92,6 +90,10 @@ let
       pkgs.nodejs
 
       #zls
+    ]
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      # clipboard support (Wayland/X11 only)
+      pkgs.wl-clipboard
     ];
 
     catppuccin.nvim.enable = false;
