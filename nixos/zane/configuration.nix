@@ -21,14 +21,38 @@
   # $ nix-env -qaP | grep wget
   system.primaryUser = "andre";
 
-  environment.systemPackages =
-    [ 
-      pkgs.mkalias
-      pkgs.obsidian
-      pkgs.tmux
-      pkgs.wezterm
-      pkgs.nh
-    ];
+  environment.systemPackages = with pkgs; [
+    mkalias
+    obsidian
+    tmux
+    wezterm
+    nh
+    
+    # Modern CLI replacements
+    bat
+    eza
+    zoxide
+    fd
+    ripgrep
+    fzf
+    jq
+    yq-go
+    delta
+    duf
+    dust
+    procs
+    bottom
+    sd
+    tokei
+    hyperfine
+    
+    # Network tools
+    curl
+    wget
+    
+    # Dev tools
+    tree-sitter
+  ];
 
   homebrew = {
     enable = true;
@@ -41,6 +65,8 @@
       "websocat"
     ];
     casks = [
+      "karabiner-elements"
+      "jetbrains-toolbox"
       "choosy"
       "leader-key"
       "hammerspoon"
@@ -65,11 +91,15 @@
     };
     onActivation.cleanup = "zap";
   };
-  nix.extraOptions = ''
-    auto-optimise-store = true
-    experimental-features = nix-command flakes
-    extra-platforms = x86_64-darwin aarch64-darwin
-  '';
+
+  nix = {
+    extraOptions = ''
+      auto-optimise-store = true
+      experimental-features = nix-command flakes
+      extra-platforms = x86_64-darwin aarch64-darwin
+    '';
+    settings.experimental-features = "nix-command flakes";
+  };
 
     #programs.nh = {
         #enable = true;
@@ -100,152 +130,87 @@
       done
     '';
 
+  system.stateVersion = 5;
+  nixpkgs.hostPlatform = "aarch64-darwin";
 
+  system.defaults = {
+    trackpad = {
+      TrackpadThreeFingerDrag = true;
+      Clicking = true;
+      TrackpadRightClick = true;
+    };
 
-  # doesn't seem to work
-  #      system.activationScripts.enableFileSharing = pkgs.lib.mkForce ''
-  #        # Add a shared directory (e.g., /Users/Shared)
-  #        #sudo sharing -a /Users/Shared
-  #
-  #        # Attempt to enable the SMB service
-  #        #sudo launchctl enable system/com.apple.smbd
-  #        #sudo launchctl kickstart -k system/com.apple.smbd
-  #        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.smbd.plist
-  #      '';
+    dock = {
+      mru-spaces = false;
+      autohide = true;
+      largesize = 64;
+      persistent-apps = [
+        "/Applications/Ghostty.app"
+      ];
+    };
 
+    finder = {
+      AppleShowAllExtensions = true;
+      ShowPathbar = true;
+      ShowStatusBar = true;
+      FXEnableExtensionChangeWarning = false;
+      _FXSortFoldersFirst = true;
+    };
 
-      # Auto upgrade nix package and the daemon service.
-      services = {
-        tailscale.enable = true;
+    loginwindow.GuestEnabled = false;
+    
+    NSGlobalDomain = {
+      AppleICUForce24HourTime = true;
+      KeyRepeat = 2;
+      InitialKeyRepeat = 15;
+      ApplePressAndHoldEnabled = false;
+      NSAutomaticCapitalizationEnabled = false;
+      NSAutomaticDashSubstitutionEnabled = false;
+      NSAutomaticPeriodSubstitutionEnabled = false;
+      NSAutomaticQuoteSubstitutionEnabled = false;
+      NSAutomaticSpellingCorrectionEnabled = false;
+    };
+
+    CustomUserPreferences = {
+      NSGlobalDomain.WebKitDeveloperExtras = true;
+      
+      "com.apple.finder" = {
+        ShowExternalHardDrivesOnDesktop = true;
+        ShowHardDrivesOnDesktop = true;
+        ShowMountedServersOnDesktop = true;
+        ShowRemovableMediaOnDesktop = true;
+        _FXSortFoldersFirst = true;
+        FXDefaultSearchScope = "SCcf";
       };
-      # nix.package = pkgs.nix;
-
-      # Necessary for using flakes on this system.
-      nix.settings.experimental-features = "nix-command flakes";
-
-      # Set Git commit hash for darwin-version.
-      # system.configurationRevision = self.rev or self.dirtyRev or null;
-
-      # Used for backwards compatibility, please read the changelog before changing.
-      # $ darwin-rebuild changelog
-      system.stateVersion = 5;
-
-      # The platform the configuration will be used on.
-      nixpkgs.hostPlatform = "aarch64-darwin";
-
-    #system.activationScripts.postUserActivation.text = ''
-    #  # Following line should allow us to avoid a logout/login cycle
-    #  /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-    #'';
-
-     system.defaults = {
-        trackpad.TrackpadThreeFingerDrag = true;
-        trackpad.Clicking = true;
-        trackpad.TrackpadRightClick = true;
-
-        # Do not automatically re-arrange spaces to most recent
-        dock = {
-          mru-spaces = false;
-          autohide  = true;
-          largesize = 64;
-          persistent-apps = [
-            "/Applications/Ghostty.app"
-          #  "${pkgs.alacritty}/Applications/Alacritty.app"
-          #  "/Applications/Firefox.app"
-          #  "${pkgs.obsidian}/Applications/Obsidian.app"
-          #  "/System/Applications/Mail.app"
-          #  "/System/Applications/Calendar.app"
-          ];
-        };
-
-        #finder.FXPreferredViewStyle = "clmv";
-        loginwindow.GuestEnabled  = false;
-        NSGlobalDomain.AppleICUForce24HourTime = true;
-        #NSGlobalDomain.AppleInterfaceStyle = "Dark";
-        NSGlobalDomain.KeyRepeat = 2;
-
-        CustomUserPreferences = {
-          NSGlobalDomain = {
-            # Add a context menu item for showing the Web Inspector in web views
-            WebKitDeveloperExtras = true;
-          };
-          "com.apple.finder" = {
-            ShowExternalHardDrivesOnDesktop = true;
-            ShowHardDrivesOnDesktop = true;
-            ShowMountedServersOnDesktop = true;
-            ShowRemovableMediaOnDesktop = true;
-            _FXSortFoldersFirst = true;
-            # When performing a search, search the current folder by default
-            FXDefaultSearchScope = "SCcf";
-          };
-          "com.apple.desktopservices" = {
-            # Avoid creating .DS_Store files on network or USB volumes
-            DSDontWriteNetworkStores = true;
-            DSDontWriteUSBStores = true;
-          };
-          "com.apple.screensaver" = {
-            # Require password immediately after sleep or screen saver begins
-            askForPassword = 1;
-            askForPasswordDelay = 0;
-          };
-          "com.apple.screencapture" = {
-            location = "~/screenshots";
-            type = "png";
-          };
-         # "com.apple.Safari" = {
-         #   # Privacy: don’t send search queries to Apple
-         #   UniversalSearchEnabled = false;
-         #   SuppressSearchSuggestions = true;
-         #   # Press Tab to highlight each item on a web page
-         #   WebKitTabToLinksPreferenceKey = true;
-         #   ShowFullURLInSmartSearchField = true;
-         #   # Prevent Safari from opening ‘safe’ files automatically after downloading
-         #   AutoOpenSafeDownloads = false;
-         #   ShowFavoritesBar = false;
-         #   IncludeInternalDebugMenu = true;
-         #   IncludeDevelopMenu = true;
-         #   WebKitDeveloperExtrasEnabledPreferenceKey = true;
-         #   WebContinuousSpellCheckingEnabled = true;
-         #   WebAutomaticSpellingCorrectionEnabled = false;
-         #   AutoFillFromAddressBook = false;
-         #   AutoFillCreditCardData = false;
-         #   AutoFillMiscellaneousForms = false;
-         #   WarnAboutFraudulentWebsites = true;
-         #   WebKitJavaEnabled = false;
-         #   WebKitJavaScriptCanOpenWindowsAutomatically = false;
-         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks" = true;
-         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" = true;
-         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled" = false;
-         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabled" = false;
-         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabledForLocalFiles" = false;
-         #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically" = false;
-         # };
-        #  "com.apple.mail" = {
-        #    # Disable inline attachments (just show the icons)
-        #    DisableInlineAttachmentViewing = true;
-        #  };
-          "com.apple.AdLib" = {
-            allowApplePersonalizedAdvertising = false;
-          };
-          "com.apple.print.PrintingPrefs" = {
-            # Automatically quit printer app once the print jobs complete
-            "Quit When Finished" = true;
-          };
-          "com.apple.SoftwareUpdate" = {
-            AutomaticCheckEnabled = true;
-            # Check for software updates daily, not just once per week
-            ScheduleFrequency = 1;
-            # Download newly available updates in background
-            AutomaticDownload = 1;
-            # Install System data files & security updates
-            CriticalUpdateInstall = 1;
-          };
-          "com.apple.TimeMachine".DoNotOfferNewDisksForBackup = true;
-          # Prevent Photos from opening automatically when devices are plugged in
-          "com.apple.ImageCapture".disableHotPlug = true;
-          # Turn on app auto-update
-          "com.apple.commerce".AutoUpdate = true;
-        };
+      
+      "com.apple.desktopservices" = {
+        DSDontWriteNetworkStores = true;
+        DSDontWriteUSBStores = true;
       };
-
+      
+      "com.apple.screensaver" = {
+        askForPassword = 1;
+        askForPasswordDelay = 0;
+      };
+      
+      "com.apple.screencapture" = {
+        location = "~/screenshots";
+        type = "png";
+      };
+      
+      "com.apple.AdLib".allowApplePersonalizedAdvertising = false;
+      "com.apple.print.PrintingPrefs"."Quit When Finished" = true;
+      
+      "com.apple.SoftwareUpdate" = {
+        AutomaticCheckEnabled = true;
+        ScheduleFrequency = 1;
+        AutomaticDownload = 1;
+        CriticalUpdateInstall = 1;
+      };
+      
+      "com.apple.TimeMachine".DoNotOfferNewDisksForBackup = true;
+      "com.apple.ImageCapture".disableHotPlug = true;
+      "com.apple.commerce".AutoUpdate = true;
+    };
+  };
 }

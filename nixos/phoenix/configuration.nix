@@ -40,6 +40,7 @@
       "websocat"
     ];
     casks = [
+      "jetbrains-toolbox"
       "choosy"
       "leader-key"
       "hammerspoon"
