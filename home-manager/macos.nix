@@ -1,49 +1,13 @@
 { config, pkgs, ... }:
 {
+  imports = [
+    ./common/base.nix
+  ];
+
   home.homeDirectory = "/Users/andre";
 
-  programs.zsh = {
-    sessionVariables = {
-      NH_FLAKE = "nixos";
-    };
-    shellAliases = {
-      ls = "eza";
-      ll = "eza -l";
-      la = "eza -la";
-      lt = "eza --tree";
-      cat = "bat";
-      cd = "z";
-      find = "fd";
-      ps = "procs";
-      du = "dust";
-      df = "duf";
-    };
-    initExtra = ''
-      eval "$(zoxide init zsh)"
-    '';
-  };
-
-  programs.bat = {
-    enable = true;
-    config = {
-      theme = "catppuccin-mocha";
-    };
-  };
-
-  programs.zoxide = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.fzf = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.eza = {
-    enable = true;
-    enableZshIntegration = true;
-    git = true;
-    icons = true;
+  programs.zsh.sessionVariables = {
+    FLAKE = "/Users/andre/nixos";
+    NH_FLAKE = "/Users/andre/nixos";
   };
 }

@@ -150,41 +150,51 @@
     homeConfigurations = {
       "andre@demo" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "x86_64-linux";
-	      # > Our main home-manager configuration file <
-        modules = [./home-manager/home.nix ./home-manager/linux.nix];
+        modules = [
+          catppuccin.homeModules.catppuccin
+          ./home-manager/home.nix
+          ./home-manager/linux.nix
+        ];
       };
       "andre@HBD" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "x86_64-linux";
-	      # > Our main home-manager configuration file <
-        modules = [./home-manager/home.nix ./home-manager/linux.nix];
+        modules = [
+          catppuccin.homeModules.catppuccin
+          ./home-manager/home.nix
+          ./home-manager/linux.nix
+        ];
       };
       "andre@nephelae" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "x86_64-linux";
-          # > Our main home-manager configuration file <
-          modules = [./home-manager/home.nix ./home-manager/linux.nix];
+        modules = [
+          catppuccin.homeModules.catppuccin
+          ./home-manager/home.nix
+          ./home-manager/linux.nix
+        ];
       };
       "andre@phoenix" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "aarch64-darwin";
-        # > Our main home-manager configuration file <
         modules = [
-            catppuccin.homeModules.catppuccin
-            ./home-manager/home.nix
-            ./home-manager/macos.nix
+          catppuccin.homeModules.catppuccin
+          ./home-manager/home.nix
+          ./home-manager/macos.nix
         ];
       };
       "andre@Zanes-MacBook-Air-2" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "aarch64-darwin";
-        # > Our main home-manager configuration file <
         modules = [
-            catppuccin.homeModules.catppuccin
-            ./home-manager/home.nix
-            ./home-manager/macos.nix
+          catppuccin.homeModules.catppuccin
+          ./home-manager/home.nix
+          ./home-manager/macos.nix
         ];
       };
       "andre@kraken" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "x86_64-linux";
-        # > Our main home-manager configuration file <
-        modules = [./home-manager/home.nix ./home-manager/linux.nix];
+        modules = [
+          catppuccin.homeModules.catppuccin
+          ./home-manager/home.nix
+          ./home-manager/linux.nix
+        ];
       };
     };
 
