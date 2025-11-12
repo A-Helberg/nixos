@@ -140,19 +140,20 @@
       "chromium"
       "arc"
       "choosy"
-      
+      "responsively"
+
       # Productivity
       "1password"
       "obsidian"
       "iina"
       "the-unarchiver"
-      
+
       # Power User
       "karabiner-elements"
       "leader-key"
       "hammerspoon"
       "raycast"
-      
+
       # Security
       "little-snitch"
     ];
