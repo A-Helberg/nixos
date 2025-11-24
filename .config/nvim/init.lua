@@ -8,7 +8,7 @@ vim.g.maplocalleader = ","
 
 -- A simpler conjure connect shortcut
 vim.keymap.set("n", "<localleader>x", function()
-	vim.ui.input({ prompt = "Host to conect to: " }, function(input)
+	vim.ui.input({ prompt = "Host to connect to: " }, function(input)
 		if input == nil or input == "" then
 			vim.cmd.ConjureConnect()
 		elseif string.find(input, ":") or string.find(input, " ") then
@@ -16,7 +16,7 @@ vim.keymap.set("n", "<localleader>x", function()
 			vim.cmd.echo("'connecting to " .. h .. " on " .. p .. "'")
 			vim.cmd.ConjureConnect(h, p)
 		else
-			vim.ui.input({ prompt = "Port to conect to: " }, function(port)
+			vim.ui.input({ prompt = "Port to connect to: " }, function(port)
 				vim.cmd.ConjureConnect(input, port)
 			end)
 		end
@@ -138,6 +138,21 @@ vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right win
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+-- Better buffer navigation
+vim.keymap.set("n", "[b", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
+vim.keymap.set("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
+vim.keymap.set("n", "[B", "<cmd>bfirst<cr>", { desc = "First buffer" })
+vim.keymap.set("n", "]B", "<cmd>blast<cr>", { desc = "Last buffer" })
+
+-- Quickfix list navigation
+vim.keymap.set("n", "[q", "<cmd>cprevious<cr>", { desc = "Previous quickfix item" })
+vim.keymap.set("n", "]q", "<cmd>cnext<cr>", { desc = "Next quickfix item" })
+vim.keymap.set("n", "[Q", "<cmd>cfirst<cr>", { desc = "First quickfix item" })
+vim.keymap.set("n", "]Q", "<cmd>clast<cr>", { desc = "Last quickfix item" })
+
+-- Oil.nvim file explorer
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
 vim.filetype.add({
 	-- Detect and assign filetype based on the extension of the filename
 	extension = {
@@ -146,6 +161,9 @@ vim.filetype.add({
 		conf = "conf",
 		env = "dotenv",
 		cljd = "clojure",
+		scala = "scala",
+		sbt = "scala",
+		sc = "scala",
 	},
 	-- Detect and apply filetypes based on the entire filename
 	--  filename = {
@@ -241,7 +259,18 @@ require("lazy").setup({
 		"stevearc/oil.nvim",
 		---@module 'oil'
 		---@type oil.SetupOpts
-		opts = {},
+		opts = {
+			default_file_explorer = true,
+			columns = {
+				"icon",
+				-- "permissions",
+				-- "size",
+				-- "mtime",
+			},
+			view_options = {
+				show_hidden = true,
+			},
+		},
 		-- Optional dependencies
 		dependencies = { { "echasnovski/mini.icons", opts = {} } },
 		-- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
@@ -298,6 +327,41 @@ require("lazy").setup({
 	{
 		"Olical/conjure",
 		event = "VeryLazy",
+	},
+
+	-- Scala
+	{
+		"scalameta/nvim-metals",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		ft = { "scala", "sbt", "java" },
+		opts = function()
+			local metals_config = require("metals").bare_config()
+
+			-- Example of settings
+			metals_config.settings = {
+				showImplicitArguments = true,
+				excludedPackages = { "akka.actor.typed.javadsl", "com.github.swagger.akka.javadsl" },
+			}
+
+			-- Debug settings if you want to enable them
+			-- metals_config.init_options.statusBarProvider = "on"
+
+			metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+			return metals_config
+		end,
+		config = function(self, metals_config)
+			local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = self.ft,
+				callback = function()
+					require("metals").initialize_or_attach(metals_config)
+				end,
+				group = nvim_metals_group,
+			})
+		end,
 	},
 
 	-- Here is a more advanced example where we pass configuration
@@ -382,6 +446,7 @@ require("lazy").setup({
 				{ "<leader>s", group = "[S]earch" },
 				{ "<leader>w", group = "[W]orkspace" },
 				{ "<leader>t", group = "[T]oggle" },
+				{ "<leader>g", group = "[G]it" },
 				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
 
 				-- { "<localleader>o", group = "[O]rg mode", mode = { "n" } },
@@ -393,7 +458,6 @@ require("lazy").setup({
 				{ "<localleader>s", group = "[S]ession", mode = { "n" } },
 				{ "<localleader>t", group = "[T]est", mode = { "n" } },
 				{ "<localleader>v", group = "[V]alue", mode = { "n" } },
-				{ "<localleader>t", group = "[T]est", mode = { "n" } },
 			},
 		},
 	},
@@ -789,10 +853,25 @@ require("lazy").setup({
 				lua = { "stylua" },
 				-- Conform can also run multiple formatters sequentially
 				-- python = { "isort", "black" },
+				python = { "ruff_format" },
 				--
 				-- You can use a sub-list to tell conform to run *until* a formatter
 				-- is found.
-				-- javascript = { { "prettierd", "prettier" } },
+				javascript = { { "prettierd", "prettier" } },
+				typescript = { { "prettierd", "prettier" } },
+				javascriptreact = { { "prettierd", "prettier" } },
+				typescriptreact = { { "prettierd", "prettier" } },
+				json = { { "prettierd", "prettier" } },
+				jsonc = { { "prettierd", "prettier" } },
+				html = { { "prettierd", "prettier" } },
+				css = { { "prettierd", "prettier" } },
+				scss = { { "prettierd", "prettier" } },
+				markdown = { { "prettierd", "prettier" } },
+				yaml = { { "prettierd", "prettier" } },
+				-- Scala formatting is handled by Metals LSP
+				scala = { "lsp" },
+				-- Clojure formatting
+				clojure = { "cljfmt" },
 			},
 		},
 	},
@@ -1018,6 +1097,29 @@ require("lazy").setup({
 				keys = { [">)"] = { paredit.api.slurp_forwards, "Slurp forwards" } },
 			})
 		end,
+	},
+	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim", -- required
+			"sindrets/diffview.nvim", -- optional - Diff integration
+
+			-- Only one of these is needed.
+			"nvim-telescope/telescope.nvim", -- optional
+		},
+		cmd = "Neogit",
+		keys = {
+			{ "<leader>gg", "<cmd>Neogit<cr>", desc = "Neogit" },
+			{ "<leader>gc", "<cmd>Neogit commit<cr>", desc = "Git commit" },
+			{ "<leader>gp", "<cmd>Neogit push<cr>", desc = "Git push" },
+			{ "<leader>gP", "<cmd>Neogit pull<cr>", desc = "Git pull" },
+		},
+		opts = {
+			integrations = {
+				telescope = true,
+				diffview = true,
+			},
+		},
 	},
 
 	-- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the

@@ -15,3 +15,6 @@ export NIX_CONFIG="access-tokens = github.com=ghp_...."
 
 #### Update a specific input
 `nix flake lock --update-input nixpkgs`
+
+nix run home-manager/master -- init --switch
+home-manager switch --flake .

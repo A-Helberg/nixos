@@ -1,11 +1,13 @@
 { config, pkgs, ... }:
-{ 
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
+{
+  imports = [
+    ./common/base.nix
+  ];
+
   home.homeDirectory = "/Users/andre";
 
   programs.zsh.sessionVariables = {
-    NH_FLAKE = "${config.home.homeDirectory}/nixos";
+    FLAKE = "/Users/andre/nixos";
+    NH_FLAKE = "/Users/andre/nixos";
   };
-
 }

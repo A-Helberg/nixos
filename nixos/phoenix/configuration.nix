@@ -1,25 +1,13 @@
-{config, pkgs, inputs, ...}:
+{ config, pkgs, inputs, ... }:
 {
   imports = [
-    # If you want to use modules your own flake exports (from modules/darwin):
-    # inputs.self.darwinModules.example
-
-    # Or modules from other flakes (such as nixos-hardware):
-    # inputs.hardware.nixosModules.common-cpu-amd
-    # inputs.hardware.nixosModules.common-ssd
-
-    # You can also split up your configuration and import pieces of it here:
-    # ./users.nix
-    # ./common/yabai.nix
-    # ./common/skhd.nix
-    # ./common/sketchybar.nix
-    # ./common/aerospace.nix
+    ../../darwin
   ];
-  networking.hostName = "phoenix"; # Define your hostname.
-  # List packages installed in system profile. To search by name, run:
-  # $ nix-env -qaP | grep wget
+
+  networking.hostName = "phoenix";
   system.primaryUser = "andre";
 
+<<<<<<< HEAD
   # Allow only specific unfree packages needed on this host (safer than enabling all unfree)
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
     "obsidian"
@@ -278,4 +266,19 @@
         };
       };
 
+=======
+  # Phoenix uses VirtualBox and Aerospace instead of defaults
+  homebrew.casks = [
+    "virtualbox"
+    "nikitabobko/tap/aerospace"
+  ];
+
+  system.defaults.dock.persistent-apps = [
+    "/Applications/Ghostty.app"
+  ];
+
+  system.activationScripts.postUserActivation.text = ''
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+  '';
+>>>>>>> origin/zane-macbook-air
 }
