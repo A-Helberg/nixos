@@ -96,20 +96,22 @@
         modules = [
           ./nixos/phoenix/configuration.nix
           # does not work becuase grub?
-          #catppuccin.nixosModules.catppuccin
+          # catppuccin.nixosModules.catppuccin
           nix-homebrew.darwinModules.nix-homebrew
           {
+            # Keep Homebrew basic wiring here; host-specific knobs live in the host module
             nix-homebrew = {
               enable = true;
-              enableRosetta = true; # Apple Silicon Only
               user = "andre"; # User owning the Homebrew prefix
+              # NOTE: enableRosetta and other settings are defined in nixos/phoenix/configuration.nix
             };
           }
         ];
       };
     };
 
-    #darwinPackages = self.darwinConfigurations.phoenix.pkgs;
+    # Provide a formatter per system so `nix fmt` works (kept simple; extend as needed)
+    formatter = forEachSupportedSystem ({ pkgs, ... }: pkgs.alejandra);
 
     homeConfigurations = {
       "andre@demo" = mkHome "x86_64-linux" [
@@ -134,6 +136,38 @@
         ./home-manager/macos.nix
       ];
     };
+
+    # Developer environments kept out of the HM profile to avoid heavy deps in the base environment
+    devShells = forEachSupportedSystem ({ pkgs, pkgs-stable, pkgs-bleeding }: {
+      # Lightweight default shell for general work
+      default = pkgs.mkShell {
+        # Keep base tools here to avoid pulling language toolchains by default
+        packages = with pkgs; [ git jq ripgrep fd fzf ];
+      };
+
+      # JavaScript/TypeScript shell – isolates node/tsserver from HM profile
+      # Add common JS/TS tools; keep them isolated from the global profile
+      js = pkgs.mkShell {
+        packages = with pkgs; [ nodejs yarn typescript-language-server typescript eslint_d prettierd ];
+      };
+
+      # Python shell – isolates numpy/openblas and friends
+      # Keep scientific stack out by default; extend per-project via requirements
+      python = pkgs.mkShell {
+        packages = with pkgs; [ (python3.withPackages (ps: [ ps.pip ps.virtualenv ps.uv ])) ruff ];
+      };
+
+      # Rust shell – cargo/rustup kept out of global profile
+      # Useful extras for faster iteration/testing
+      rust = pkgs.mkShell {
+        packages = with pkgs; [ rustc cargo rust-analyzer-unwrapped cargo-watch cargo-nextest ];
+      };
+
+      # OCaml shell – isolates opam/ocaml tooling
+      ocaml = pkgs.mkShell {
+        packages = with pkgs; [ ocaml ocamlPackages.dune ocamlPackages.utop ocamlformat opam ];
+      };
+    });
 
   };
 }

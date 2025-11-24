@@ -218,6 +218,20 @@ require("lazy").setup({
 	},
 
 	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim", -- required
+			"sindrets/diffview.nvim", -- optional - Diff integration
+
+			-- Only one of these is needed.
+			"nvim-telescope/telescope.nvim", -- optional
+			"ibhagwan/fzf-lua", -- optional
+			"echasnovski/mini.pick", -- optional
+			"folke/snacks.nvim", -- optional
+		},
+	},
+
+	{
 		"tpope/vim-fugitive",
 		event = "VeryLazy",
 	},
@@ -993,6 +1007,18 @@ require("lazy").setup({
 			--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 		end,
 	},
+	{
+		"julienvincent/nvim-paredit",
+		-- event = "VeryLazy",
+		ft = { "clojure" },
+		config = function()
+			-- Your keybindings here
+			local paredit = require("nvim-paredit")
+			paredit.setup({
+				keys = { [">)"] = { paredit.api.slurp_forwards, "Slurp forwards" } },
+			})
+		end,
+	},
 
 	-- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
 	-- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -1040,6 +1066,27 @@ require("lazy").setup({
 			lazy = "💤 ",
 		},
 	},
+}, {
+	"scalameta/nvim-metals",
+	ft = { "scala", "sbt", "java" },
+	opts = function()
+		local metals_config = require("metals").bare_config()
+		metals_config.on_attach = function(client, bufnr)
+			-- your on_attach function
+		end
+
+		return metals_config
+	end,
+	config = function(self, metals_config)
+		local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = self.ft,
+			callback = function()
+				require("metals").initialize_or_attach(metals_config)
+			end,
+			group = nvim_metals_group,
+		})
+	end,
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
