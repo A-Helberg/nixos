@@ -3,7 +3,13 @@
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "andre";
-  nixpkgs.config.allowUnfree = true;
+  # Restrict unfree to known packages we actually use to avoid enabling all unfree software globally
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+    "obsidian"
+    "slack"
+    "realvnc-vnc-viewer"
+  ];
+
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -19,22 +25,65 @@
   catppuccin.enable = true;
   catppuccin.flavor = "mocha";
 
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
-
   programs.zsh = {
     enable = true;
+    # Enable quality-of-life features directly in zsh for better UX
+    autosuggestion.enable = true; # Suggests commands based on history
+    syntaxHighlighting.enable = true; # Highlights command syntax as you type
     shellAliases = {
+      # Prefer modern defaults: eza over ls, bat over cat
+      ls = "eza";
+      ll = "eza -alh --group-directories-first";
+      la = "eza -A";
+      l = "eza -Alh --group-directories-first";
+      tree = "eza --tree";
+      cat = "bat --paging=never -p";
       rrun = ''f() { ssh 10.253.0.1 tmux new -d -s remote 2>/dev/null || true;
                       ssh 10.253.0.1 tmux send-keys -t remote.0 "'cd $PWD && clear'" ENTER "'$*'" ENTER "'read -s -k \"?Press any key to continue.\" && tmux detach'" ENTER
                       ssh -tt 10.253.0.1 tmux attach -t remote.0 };f'';
     };
-
+    # Helpful defaults for tooling; keep them here so every shell gets them
     sessionVariables = {
       EDITOR = "nvim";
+      # Make ripgrep+fzf fast and comprehensive by default
+      FZF_DEFAULT_COMMAND = "rg --files --hidden --glob !.git";
+      FZF_CTRL_T_COMMAND = "${config.programs.zsh.sessionVariables.FZF_DEFAULT_COMMAND or "rg --files"}";
+      # Pretty diffs in git
+      GIT_PAGER = "delta";
+      # Consistent bat style by default
+      BAT_THEME = "ansi";
     };
+
+    # Add small, ergonomic keybindings (history substring search)
+    initContent = ''
+      bindkey '^P' history-beginning-search-backward
+      bindkey '^N' history-beginning-search-forward
+    '';
   };
 
+  # Enable smarter directory jumping; speeds up cd and improves shell UX
+  programs.zoxide.enable = true;
+
+  # Enable direnv with nix integration so dev shells auto-activate per project
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true; # Use nix-direnv for fast, cached activations
+  };
+
+  # Enable nix-index with prebuilt DB to power `command-not-found`-like UX
+  programs.nix-index = {
+    enable = true; # provides `nix-index` and shell integration
+    enableZshIntegration = true;
+  };
+
+  # FZF fuzzy-finder with zsh keybindings (Ctrl-R history, Ctrl-T file search)
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  # The home.packages option allows you to install Nix packages into your
+  # environment.
   home.packages = [
     pkgs.htop
     pkgs.stow
@@ -48,10 +97,7 @@
     # potentially used for port forwarding & dev domains
     pkgs.caddy
 
-
-
     pkgs.obsidian
-
 
     pkgs.realvnc-vnc-viewer
     # network tools
@@ -115,6 +161,8 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+
+    pkgs.devenv
   ];
 
 
@@ -123,7 +171,6 @@
     ../programs/neovim
     ../programs/zsh
     ../programs/starship
-    ../programs/wezterm
     ../programs/tmux
   ];
 
@@ -140,6 +187,11 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+    
+    # Do not ignore .files
+    ".ripgreprc".text = ''
+      --hidden
+    '';
   };
 
   # Home Manager can also manage your environment variables through
@@ -167,6 +219,8 @@
        ".DS_Store"
        ".idea"
     ];
+    # Use git-delta for rich diffs in the terminal for better readability
+    delta.enable = true;
   };
 
   # Let Home Manager install and manage itself.

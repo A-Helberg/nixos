@@ -20,17 +20,22 @@
   # $ nix-env -qaP | grep wget
   system.primaryUser = "andre";
 
+  # Allow only specific unfree packages needed on this host (safer than enabling all unfree)
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+    "obsidian"
+  ];
+
   environment.systemPackages =
     [ 
       pkgs.mkalias
       pkgs.obsidian
       pkgs.tmux
-      pkgs.wezterm
       pkgs.nh
     ];
 
   homebrew = {
     enable = true;
+    # Keep taps/casks declarative here; brew analytics is not managed via this module
     brews = [
       "mas"
       "tailscale"
@@ -38,8 +43,12 @@
       "llama.cpp"
       "btop"
       "websocat"
+      "glfw"
+      #"jank"
+      #"only-switch"
     ];
     casks = [
+      "orbstack"
       "choosy"
       "leader-key"
       "hammerspoon"
@@ -64,11 +73,25 @@
     };
     onActivation.cleanup = "zap";
   };
-  nix.extraOptions = ''
-    auto-optimise-store = true
-    experimental-features = nix-command flakes
-    extra-platforms = x86_64-darwin aarch64-darwin
-  '';
+
+  # Enable Rosetta only on Apple Silicon (noop on Intel)
+  nix-homebrew.enableRosetta = pkgs.stdenv.isAarch64;
+  # Prefer declarative nix.settings over extraOptions; also turn on GC/optimise to keep the store tidy
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    # Use nix.optimise.automatic instead of auto-optimise-store (nix-darwin assertion)
+    extra-platforms = [ "x86_64-darwin" "aarch64-darwin" ];
+  };
+  # Ensure nix-darwin manages nix-daemon and related services
+  nix.enable = true;
+  # Use Touch ID for sudo on macOS (modern nix-darwin option name)
+  security.pam.services.sudo_local.touchIdAuth = true;
+  # Periodically optimise the store safely (replacement for auto-optimise-store)
+  nix.optimise.automatic = true;
+  nix.gc = {
+    automatic = true; # Reclaim space automatically
+    options = "--delete-older-than 14d"; # Keep two weeks of generations
+  };
 
     #programs.nh = {
         #enable = true;
@@ -79,25 +102,29 @@
     #    home.flake = "/Users/andre/nixos";
     #};
 
-  system.activationScripts.applications.text = let
-      env = pkgs.buildEnv {
-        name = "system-applications";
-        paths = config.environment.systemPackages;
-        pathsToLink = "/Applications";
-      };
-    in
-    pkgs.lib.mkForce ''
-      # Set up applications.
-      echo "setting up /Applications..." >&2
-      rm -rf /Applications/Nix\ Apps
-      mkdir -p /Applications/Nix\ Apps
-      find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-      while read -r src; do
-        app_name=$(basename "$src")
-        echo "copying $src" >&2
-        ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
-      done
-    '';
+  # Prefer Home Manager's per-user app links under ~/Applications to reduce activation surface.
+  # HM will create and manage symlinks for GUI apps installed in the Home profile.
+  #
+  # Old implementation retained for reference (global /Applications linking via mkalias):
+  # system.activationScripts.applications.text = let
+  #     env = pkgs.buildEnv {
+  #       name = "system-applications";
+  #       paths = config.environment.systemPackages;
+  #       pathsToLink = "/Applications";
+  #     };
+  #   in
+  #   pkgs.lib.mkForce ''
+  #     # Set up applications.
+  #     echo "setting up /Applications..." >&2
+  #     rm -rf /Applications/Nix\ Apps
+  #     mkdir -p /Applications/Nix\ Apps
+  #     find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
+  #     while read -r src; do
+  #       app_name=$(basename "$src")
+  #       echo "copying $src" >&2
+  #       ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
+  #     done
+  #   '';
 
 
 
@@ -119,9 +146,7 @@
       };
       # nix.package = pkgs.nix;
 
-      # Necessary for using flakes on this system.
-      nix.settings.experimental-features = "nix-command flakes";
-
+      
       # Set Git commit hash for darwin-version.
       # system.configurationRevision = self.rev or self.dirtyRev or null;
 
@@ -132,10 +157,10 @@
       # The platform the configuration will be used on.
       nixpkgs.hostPlatform = "aarch64-darwin";
 
-    system.activationScripts.postUserActivation.text = ''
-      # Following line should allow us to avoid a logout/login cycle
-      /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-    '';
+    #system.activationScripts.postUserActivation.text = ''
+    #  # Following line should allow us to avoid a logout/login cycle
+    #  /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+    #'';
 
      system.defaults = {
         trackpad.TrackpadThreeFingerDrag = true;
@@ -162,6 +187,12 @@
         NSGlobalDomain.AppleICUForce24HourTime = true;
         #NSGlobalDomain.AppleInterfaceStyle = "Dark";
         NSGlobalDomain.KeyRepeat = 2;
+        # Reduce “smart” substitutions which can be disruptive for development
+        NSGlobalDomain.NSAutomaticCapitalizationEnabled = false;
+        NSGlobalDomain.NSAutomaticPeriodSubstitutionEnabled = false;
+        NSGlobalDomain.NSAutomaticQuoteSubstitutionEnabled = false;
+        NSGlobalDomain.NSAutomaticDashSubstitutionEnabled = false;
+        NSGlobalDomain.AppleShowAllExtensions = true;
 
         CustomUserPreferences = {
           NSGlobalDomain = {

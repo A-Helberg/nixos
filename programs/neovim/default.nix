@@ -1,38 +1,39 @@
 { pkgs, config, lib, ... }:
 let
 
-  treesitterWithGrammars = (pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
-    p.bash
-    p.clojure
-    p.comment
-    p.css
-    p.dart
-    p.dockerfile
-    #p.zsh
-    p.gitattributes
-    p.gitignore
-    p.go
-    p.gomod
-    p.gowork
-    p.hcl
-    p.javascript
-    p.jq
-    p.json5
-    p.json
-    p.lua
-    p.make
-    p.markdown
-    p.nix
-    p.ocaml
-    p.python
-    p.rust
-    p.toml
-    p.typescript
-    p.terraform
-    p.vue
-    p.yaml
-    p.zig
-  ]));
+  treesitterWithGrammars = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
+  #(pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
+  #  p.bash
+  #  p.clojure
+  #  p.comment
+  #  p.css
+  #  p.dart
+  #  p.dockerfile
+  #  #p.zsh
+  #  p.gitattributes
+  #  p.gitignore
+  #  p.go
+  #  p.gomod
+  #  p.gowork
+  #  p.hcl
+  #  p.javascript
+  #  p.jq
+  #  p.json5
+  #  p.json
+  #  p.lua
+  #  p.make
+  #  p.markdown
+  #  p.nix
+  #  p.ocaml
+  #  p.python
+  #  p.rust
+  #  p.toml
+  #  p.typescript
+  #  p.terraform
+  #  p.vue
+  #  p.yaml
+  #  p.zig
+  #]));
 
   home.sessionVariables = {
     EDITOR = "nvim";
@@ -43,7 +44,7 @@ let
     paths = treesitterWithGrammars.dependencies;
   };
 
-  lazy-nix-ref = "cb1c0c4cf0ab3c1a2227dcf24abd3e430a8a9cd8";
+  lazy-nix-ref = "22d0f4d737104cba6c18ba9ca3ff1db5160c67b5";
   lazy-nix-sha = "sha256-HwrO32Sj1FUWfnOZQYQ4yVgf/TQZPw0Nl+df/j0Jhbc=";
 
   lazy-nix-helper-nvim = pkgs.vimUtils.buildVimPlugin {
@@ -73,12 +74,14 @@ let
       pkgs.ripgrep
       pkgs.fzf
       pkgs.fd
-      pkgs.black
+      # Python formatter
+      #pkgs.black
       pkgs.stylua
       # needed to install lsp's
       pkgs.unzip
       # clipboard support
-      pkgs.wl-clipboard
+      # TODO: only works on linux
+      # pkgs.wl-clipboard
       pkgs.ocaml
 
       # LSs
@@ -88,8 +91,8 @@ let
       pkgs.lua-language-server
       pkgs.rust-analyzer-unwrapped
       pkgs.typescript-language-server
-
       pkgs.nodejs
+
 
       #zls
     ];
@@ -116,7 +119,7 @@ let
     xdg.configFile."nvim/lua/nixos.lua" = {
       text = ''
         local plugins = {
-        ${pluginList config.programs.neovim.plugins}
+          ${pluginList config.programs.neovim.plugins}
         }
         local lazy_nix_helper_path = "${lazy-nix-helper-nvim}"
         if not vim.loop.fs_stat(lazy_nix_helper_path) then
@@ -131,7 +134,7 @@ let
             })
           end
         end
-  
+
         -- add the Lazy Nix Helper plugin to the vim runtime
         vim.opt.rtp:prepend(lazy_nix_helper_path)
   
@@ -152,7 +155,19 @@ let
             lazypath,
           })
         end
+
         vim.opt.rtp:prepend(lazypath)
+        vim.opt.runtimepath:append(vim.fn.expand("~/.local/share/nvim/nix/nvim-treesitter"))
+
+        -- Re-append parser paths after Lazy resets runtimepath
+        vim.api.nvim_create_autocmd("User", {
+          pattern = "VeryLazy",
+          callback = function()
+            -- Make Nix-provided Tree-sitter parsers visible to Neovim
+            -- This lets :TSInstallInfo detect them as installed
+            vim.opt.runtimepath:append("${treesitter-parsers}")
+          end,
+        })
       '';
       };
   

@@ -103,6 +103,18 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagn
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
+-- Tabs Keymaps
+vim.keymap.set("n", "<leader>1", "1gt", { desc = "Go to 1st Tab" })
+vim.keymap.set("n", "<leader>2", "2gt", { desc = "Go to 2nd Tab" })
+vim.keymap.set("n", "<leader>3", "3gt", { desc = "Go to 3rd Tab" })
+vim.keymap.set("n", "<leader>4", "4gt", { desc = "Go to 4th Tab" })
+vim.keymap.set("n", "<leader>5", "5gt", { desc = "Go to 5th Tab" })
+-- vim.keymap.set("n", "<leader>6", "6gt", { desc = "Go to 6th Tab" })
+-- vim.keymap.set("n", "<leader>7", "7gt", { desc = "Go to 7th Tab" })
+-- vim.keymap.set("n", "<leader>8", "8gt", { desc = "Go to 8th Tab" })
+-- vim.keymap.set("n", "<leader>9", "9gt", { desc = "Go to 9th Tab" })
+--
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -112,10 +124,10 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagn
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- TIP: Disable arrow keys in normal mode
-vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set("n", "<right>", '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set("n", "<up>", '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set("n", "<down>", '<cmd>echo "Use j to move!!"<CR>')
+-- vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
+-- vim.keymap.set("n", "<right>", '<cmd>echo "Use l to move!!"<CR>')
+-- vim.keymap.set("n", "<up>", '<cmd>echo "Use k to move!!"<CR>')
+-- vim.keymap.set("n", "<down>", '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -204,6 +216,25 @@ require("lazy").setup({
 			-- })
 		end,
 	},
+
+	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim", -- required
+			"sindrets/diffview.nvim", -- optional - Diff integration
+
+			-- Only one of these is needed.
+			"nvim-telescope/telescope.nvim", -- optional
+			"ibhagwan/fzf-lua", -- optional
+			"echasnovski/mini.pick", -- optional
+			"folke/snacks.nvim", -- optional
+		},
+	},
+
+	{
+		"tpope/vim-fugitive",
+		event = "VeryLazy",
+	},
 	-- Better File explorer
 	-- https://github.com/stevearc/oil.nvim
 	{
@@ -218,22 +249,22 @@ require("lazy").setup({
 		lazy = false,
 	},
 
-	{
-		"zbirenbaum/copilot-cmp",
-		config = function()
-			require("copilot_cmp").setup()
-		end,
-	},
+	--{
+	--	"zbirenbaum/copilot-cmp",
+	--	config = function()
+	--		require("copilot_cmp").setup()
+	--	end,
+	--},
 
-	{
-		"zbirenbaum/copilot.lua",
-		config = function()
-			require("copilot").setup({
-				suggestion = { enabled = false },
-				panel = { enabled = false },
-			})
-		end,
-	},
+	--{
+	--	"zbirenbaum/copilot.lua",
+	--	config = function()
+	--		require("copilot").setup({
+	--			suggestion = { enabled = false },
+	--			panel = { enabled = false },
+	--		})
+	--	end,
+	--},
 
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
@@ -353,6 +384,7 @@ require("lazy").setup({
 				{ "<leader>t", group = "[T]oggle" },
 				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
 
+				-- { "<localleader>o", group = "[O]rg mode", mode = { "n" } },
 				{ "<localleader>c", group = "[C]onnection", mode = { "n" } },
 				{ "<localleader>e", group = "[E]valuate", mode = { "n" } },
 				{ "<localleader>g", group = "[G]et", mode = { "n" } },
@@ -649,7 +681,7 @@ require("lazy").setup({
 			--  - settings (table): Override the default settings passed when initializing the server.
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {
-				-- clangd = {},
+				clangd = {},
 				-- gopls = {},
 				-- pyright = {},
 				-- rust_analyzer = {},
@@ -733,7 +765,7 @@ require("lazy").setup({
 		lazy = false,
 		keys = {
 			{
-				"<leader>f",
+				"<leader>ff",
 				function()
 					require("conform").format({ async = true, lsp_fallback = true })
 				end,
@@ -975,6 +1007,18 @@ require("lazy").setup({
 			--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 		end,
 	},
+	{
+		"julienvincent/nvim-paredit",
+		-- event = "VeryLazy",
+		ft = { "clojure" },
+		config = function()
+			-- Your keybindings here
+			local paredit = require("nvim-paredit")
+			paredit.setup({
+				keys = { [">)"] = { paredit.api.slurp_forwards, "Slurp forwards" } },
+			})
+		end,
+	},
 
 	-- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
 	-- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -1022,6 +1066,27 @@ require("lazy").setup({
 			lazy = "💤 ",
 		},
 	},
+}, {
+	"scalameta/nvim-metals",
+	ft = { "scala", "sbt", "java" },
+	opts = function()
+		local metals_config = require("metals").bare_config()
+		metals_config.on_attach = function(client, bufnr)
+			-- your on_attach function
+		end
+
+		return metals_config
+	end,
+	config = function(self, metals_config)
+		local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = self.ft,
+			callback = function()
+				require("metals").initialize_or_attach(metals_config)
+			end,
+			group = nvim_metals_group,
+		})
+	end,
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
