@@ -16,13 +16,15 @@
 
   programs.git = {
     enable = true;
-    userName = "Andre Helberg";
-    userEmail = "helberg.andre@gmail.com";
     ignores = [
       ".DS_Store"
       ".idea"
     ];
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Andre Helberg";
+        email = "helberg.andre@gmail.com";
+      };
       init.defaultBranch = "main";
     };
   };

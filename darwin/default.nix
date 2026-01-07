@@ -134,13 +134,13 @@
       "visual-studio-code"
       "orbstack"
       "ghostty"
-      
+
       # Browsers
       "firefox"
       "chromium"
       "arc"
       "choosy"
-      "responsively"
+      #"responsively"
 
       # Productivity
       "1password"
@@ -152,7 +152,7 @@
       "karabiner-elements"
       "leader-key"
       "hammerspoon"
-      "raycast"
+      #"raycast"
 
       # Security
       "little-snitch"
