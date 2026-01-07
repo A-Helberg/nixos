@@ -788,7 +788,8 @@ require("lazy").setup({
 			if not require("lazy-nix-helper").mason_enabled() then
 				for server_name, server in pairs(servers) do
 					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-					require("lspconfig")[server_name].setup(server)
+					vim.lsp.config(server_name, server)
+					vim.lsp.enable(server_name)
 				end
 			else
 				-- Ensure the servers and tools above are installed
@@ -818,7 +819,8 @@ require("lazy").setup({
 							-- certain features of an LSP (for example, turning off formatting for tsserver)
 							server.capabilities =
 								vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-							require("lspconfig")[server_name].setup(server)
+							vim.lsp.config(server_name, server)
+							vim.lsp.enable(server_name)
 						end,
 					},
 				})
