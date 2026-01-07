@@ -9,6 +9,7 @@
     go-task
     kubectl
     mtr
+    babashka
     iperf3
     killall
     nerd-fonts.jetbrains-mono

@@ -1,0 +1,10 @@
+#!/bin/sh
+CURRENT=$(aerospace list-workspaces --focused)
+
+# Confirm kill
+RESULT=$(osascript -e "button returned of (display dialog \"Are you sure you want to close all windows in '$CURRENT'?\" buttons {\"Cancel\", \"Kill Session\"} default button \"Cancel\" with title \"Kill Session\" with icon stop)")
+
+if [ "$RESULT" = "Kill Session" ]; then
+    ~/.config/aerospace/bin/kill-session "$CURRENT"
+fi
+

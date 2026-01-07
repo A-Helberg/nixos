@@ -6,11 +6,34 @@
       "value" : "/Applications/Ghostty.app"
     },
     {
+     "key": "d",
+     "type": "dynamic",
+     "label": "Simple Demo",
+     "value": "~/Projects/LeaderKey/bin/simple_dynamic.sh"
+    },
+    {
+      "key": "s",
+      "type": "dynamic",
+      "label": "Session",
+      "value": "~/.config/aerospace/bin/list-sessions-menu"
+    },
+    {
       "actions" : [
-        {
-          "key" : "s",
-          "type" : "application",
-          "value" : "/Applications/Safari.app"
+        { 
+          "key": "s",
+          "type": "group",
+          "actions": [
+            {
+              "key": "a",
+              "type": "application",
+              "value": "/Applications/Safari.app"
+            },
+            {
+              "key": "l",
+              "type": "application",
+              "value": "/Applications/Slack.app"
+            }
+          ]
         },
         {
           "key" : "e",
@@ -31,6 +54,26 @@
           "key" : "o",
           "type" : "application",
           "value" : "/nix/store/jfjh7xd07qmgm58h6sg2chz28pqpbd57-obsidian-1.9.14/Applications/Obsidian.app"
+        },
+        {
+          "key" : "b",
+          "type" : "application",
+          "value" : "/Applications/Arc.app"
+        },
+        {
+          "key" : "u",
+          "type" : "application",
+          "value" : "/Applications/Cursor.app"
+        },
+        {
+          "key" : "m",
+          "type" : "application",
+          "value" : "/System/Applications/Music.app"
+        },
+        {
+          "key" : "1",
+          "type" : "application",
+          "value" : "/Applications/1Password.app"
         }
       ],
       "key" : "o",
@@ -57,31 +100,6 @@
       "key" : "r",
       "type" : "group"
     },
-    {
-      "key" : "b",
-      "type" : "application",
-      "value" : "/Applications/Arc.app"
-    },
-    {
-      "key" : "u",
-      "type" : "application",
-      "value" : "/Applications/Cursor.app"
-    },
-    {
-      "key" : "m",
-      "type" : "application",
-      "value" : "/System/Applications/Music.app"
-    },
-    {
-      "key" : "1",
-      "type" : "application",
-      "value" : "/Applications/1Password.app"
-    },
-    {
-      "key" : "s",
-      "type" : "application",
-      "value" : "/Applications/Slack.app"
-    }
   ],
   "type" : "group"
 }

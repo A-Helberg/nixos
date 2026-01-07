@@ -1,0 +1,11 @@
+#!/bin/sh
+# Get current session name
+CURRENT=$(aerospace list-workspaces --focused)
+
+# Ask for new name using AppleScript
+NEW_NAME=$(osascript -e "text returned of (display dialog \"Rename session '$CURRENT' to:\" default answer \"$CURRENT\" buttons {\"Cancel\", \"Rename\"} default button \"Rename\" with title \"Rename Session\")")
+
+if [ -n "$NEW_NAME" ]; then
+    ~/.config/aerospace/bin/rename-session "$NEW_NAME" "$CURRENT"
+fi
+
