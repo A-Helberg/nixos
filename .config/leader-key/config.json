@@ -6,34 +6,47 @@
       "value" : "/Applications/Ghostty.app"
     },
     {
-     "key": "d",
-     "type": "dynamic",
-     "label": "Simple Demo",
-     "value": "~/Projects/LeaderKey/bin/simple_dynamic.sh"
+      "key" : "d",
+      "label" : "Simple Dynamic Demo",
+      "type" : "dynamic",
+      "value" : "~/Projects/LeaderKey/bin/simple_dynamic.sh"
     },
     {
-      "key": "s",
-      "type": "dynamic",
-      "label": "Session",
-      "value": "~/.config/aerospace/bin/list-sessions-menu"
+      "key" : "s",
+      "label" : "Session",
+      "type" : "dynamic",
+      "value" : "~/.config/aerospace/bin/list-sessions-menu"
     },
     {
       "actions" : [
-        { 
-          "key": "s",
-          "type": "group",
-          "actions": [
+        {
+          "key" : "m",
+          "label" : "Move Window to...",
+          "type" : "dynamic",
+          "value" : "~/.config/aerospace/bin/list-sessions-menu move"
+        }
+      ],
+      "key" : "w",
+      "label" : "W̲indow",
+      "type" : "group"
+    },
+    {
+      "actions" : [
+        {
+          "actions" : [
             {
-              "key": "a",
-              "type": "application",
-              "value": "/Applications/Safari.app"
+              "key" : "a",
+              "type" : "application",
+              "value" : "/Applications/Safari.app"
             },
             {
-              "key": "l",
-              "type": "application",
-              "value": "/Applications/Slack.app"
+              "key" : "l",
+              "type" : "application",
+              "value" : "/Applications/Slack.app"
             }
-          ]
+          ],
+          "key" : "s",
+          "type" : "group"
         },
         {
           "key" : "e",
@@ -63,12 +76,8 @@
         {
           "key" : "u",
           "type" : "application",
+          "label": "Cu̲rsor",
           "value" : "/Applications/Cursor.app"
-        },
-        {
-          "key" : "m",
-          "type" : "application",
-          "value" : "/System/Applications/Music.app"
         },
         {
           "key" : "1",
@@ -77,6 +86,7 @@
         }
       ],
       "key" : "o",
+      "label": "O̲pen",
       "type" : "group"
     },
     {
@@ -99,7 +109,7 @@
       ],
       "key" : "r",
       "type" : "group"
-    },
+    }
   ],
   "type" : "group"
 }

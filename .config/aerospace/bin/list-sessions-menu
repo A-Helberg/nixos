@@ -6,70 +6,83 @@
          '[babashka.fs :as fs])
 
 (def bin-dir (fs/expand-home "~/.config/aerospace/bin"))
+(def mode (first *command-line-args*)) ;; "move" or nil (switch)
 
 (defn get-workspaces []
   (let [out (:out (sh "aerospace" "list-workspaces" "--monitor" "all" "--empty" "no"))]
     (remove str/blank? (str/split-lines out))))
-
-(defn find-best-key [name used-keys]
-  (let [lower-name (str/lower-case name)
-        ;; Try to find first char in name that isn't used
-        char-key (some #(let [c (str %)]
-                          (when (and (re-matches #"[a-z0-9]" c)
-                                     (not (contains? used-keys c)))
-                            c))
-                       lower-name)]
-    (or char-key
-        ;; Fallback: try 1-9, then a-z
-        (some #(let [c (str %)]
-                 (when (not (contains? used-keys c))
-                   c))
-              (concat (map str (range 1 10))
-                      (map char (range (int \a) (inc (int \z)))))))))
 
 (defn underline-char [name char-key]
   (if-let [idx (str/index-of (str/lower-case name) char-key)]
     (let [before (subs name 0 idx)
           target (str (get name idx))
           after (subs name (inc idx))]
-      ;; Append Unicode Combining Low Line (U+0332)
       (str before target "\u0332" after))
     name))
 
+(defn build-menu-items-recursive [workspaces is-move depth]
+  (let [;; Group workspaces by character at current depth
+        grouped (group-by (fn [name]
+                           (when (> (count name) depth)
+                             (str/lower-case (str (get name depth)))))
+                         workspaces)
+        ;; Remove nil key (workspaces shorter than depth)
+        grouped (dissoc grouped nil)]
+    
+    (mapcat (fn [[char names]]
+              (if (= 1 (count names))
+                ;; Single workspace with this prefix - create direct command
+                (let [name (first names)]
+                  [{:key char
+                    :type "command"
+                    :label (underline-char name char)
+                    :value (if is-move
+                             (str "aerospace move-node-to-workspace \"" name "\"")
+                             (str "aerospace workspace \"" name "\""))}])
+                
+                ;; Multiple workspaces - create group and recurse to next depth
+                [{:key char
+                  :type "group"
+                  :label (str (underline-char char char) " →")
+                  :actions (build-menu-items-recursive names is-move (inc depth))}]))
+            grouped)))
+
+(defn generate-workspace-menu-items [workspaces is-move used-keys]
+  (let [;; Filter out workspaces that would conflict with static keys
+        available-workspaces (filter #(not (contains? used-keys 
+                                                      (str/lower-case (str (first %)))))
+                                    workspaces)]
+    (build-menu-items-recursive available-workspaces is-move 0)))
+
 (defn generate-menu []
-  ;; 1. Define Static Actions (tmux-like)
-  (let [static-items [{:key "$"
-                       :type "command"
-                       :label "Rename Session"
-                       :value (str bin-dir "/gui-rename-session")}
-                      {:key "c"
-                       :type "command"
-                       :label "Create Session"
-                       :value (str bin-dir "/gui-create-session")}
-                      {:key "x"
-                       :type "command"
-                       :label "Kill Session"
-                       :value (str bin-dir "/gui-kill-session")}]
+  (let [is-move (= mode "move")
         
-        used-keys-init (set (map :key static-items))
+        ;; Define Static Actions based on mode
+        static-items (if is-move
+                       ;; Move Mode Static Items
+                       [{:key "c"
+                         :type "command"
+                         :label "New Session..."
+                         :value (str bin-dir "/gui-create-session")}]
+                       
+                       ;; Switch Mode Static Items (Standard)
+                       [{:key "$"
+                         :type "command"
+                         :label "Rename Session"
+                         :value (str bin-dir "/gui-rename-session")}
+                        {:key "c"
+                         :type "command"
+                         :label "Create Session"
+                         :value (str bin-dir "/gui-create-session")}
+                        {:key "x"
+                         :type "command"
+                         :label "Kill Session"
+                         :value (str bin-dir "/gui-kill-session")}])
         
-        ;; 2. Generate Dynamic Session Items
+        used-keys (set (map :key static-items))
         workspaces (get-workspaces)
-        dynamic-items-result (reduce (fn [acc name]
-                                       (let [used-keys (:used-keys acc)
-                                             key (find-best-key name used-keys)]
-                                         (if key
-                                           (-> acc
-                                               (update :items conj {:key key
-                                                                    :type "command"
-                                                                    :label (underline-char name key)
-                                                                    :value (str "aerospace workspace \"" name "\"")})
-                                               (update :used-keys conj key))
-                                           acc)))
-                                     {:items [] :used-keys used-keys-init}
-                                     workspaces)
-        
-        all-items (concat static-items (:items dynamic-items-result))]
+        dynamic-items (generate-workspace-menu-items workspaces is-move used-keys)
+        all-items (concat static-items dynamic-items)]
     
     (println (json/generate-string all-items {:pretty true}))))
 

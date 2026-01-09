@@ -1,12 +1,8 @@
 #!/bin/sh
-PROJECTS_DIR="$HOME/Projects"
 
-# Ask for project name using AppleScript
-# We could try to list projects, but standard AppleScript 'choose from list' is slow if list is huge.
-# Simple text input is faster and matches "create" semantics.
-NAME=$(osascript -e "text returned of (display dialog \"Create Session (Project Name):\" default answer \"\" buttons {\"Cancel\", \"Create\"} default button \"Create\" with title \"New Session\")")
+# Ask for session name using AppleScript
+NAME=$(osascript -e "text returned of (display dialog \"Create Session:\" default answer \"\" buttons {\"Cancel\", \"Create\"} default button \"Create\" with title \"New Session\")")
 
 if [ -n "$NAME" ]; then
     ~/.config/aerospace/bin/create-session "$NAME"
 fi
-
