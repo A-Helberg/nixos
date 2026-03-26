@@ -39,7 +39,13 @@ const UNIQUE_ID    = process.env.MATTER_UNIQUE_ID ?? "switchbot-lock-ultra-bridg
 // ---------------------------------------------------------------------------
 
 class SwitchbotLockServer extends DoorLockServer {
-    override async lockDoor() {
+    async initialize() {
+        // Set mandatory operatingMode before the base initializer validates state
+        this.state.operatingMode = DoorLock.OperatingMode.Normal;
+        return super.initialize();
+    }
+
+    async lockDoor() {
         console.log("[bridge] Sending lock command to SwitchBot...");
         try {
             const { stdout } = await execFileAsync("switchbot-lock", ["lock"]);
@@ -52,7 +58,7 @@ class SwitchbotLockServer extends DoorLockServer {
         }
     }
 
-    override async unlockDoor() {
+    async unlockDoor() {
         console.log("[bridge] Sending unlock command to SwitchBot...");
         try {
             const { stdout } = await execFileAsync("switchbot-lock", ["unlock"]);
@@ -95,7 +101,7 @@ const server = await ServerNode.create({
         productName: "Lock Ultra Bridge",
         productLabel: "Lock Ultra Bridge",
         productId: 0x8000,
-        serialNumber: UNIQUE_ID,
+        serialNumber: `${UNIQUE_ID}-sn`,
         uniqueId: UNIQUE_ID,
     },
 });

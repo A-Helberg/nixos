@@ -72,6 +72,10 @@ in
 
   environment.systemPackages = [ switchbot-lock switchbot-get-key ];
 
+  # Matter commissioning + operational ports
+  networking.firewall.allowedUDPPorts = [ 5353 5540 ];
+  networking.firewall.allowedTCPPorts = [ 5540 ];
+
   # ---------------------------------------------------------------------------
   # Matter bridge service
   # ---------------------------------------------------------------------------
