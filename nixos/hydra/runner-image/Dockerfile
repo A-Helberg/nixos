@@ -32,3 +32,14 @@ RUN mkdir -p /root/.lein /home/runner/.lein && \
     echo '{:mirrors {"central" {:name "central" :url "https://maven.coded.page/"} \
              "clojars" {:name "clojars" :url "https://maven.coded.page/repo/"}}}' | tee /root/.lein/profiles.clj /home/runner/.lein/profiles.clj && \
     chown -R runner:runner /home/runner/.clojure /home/runner/.lein
+
+# Ensure iptables legacy is used for docker compatibility inside the VM
+RUN update-alternatives --set iptables /usr/sbin/iptables-legacy || true && \
+    update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy || true
+
+# The Firecracker VM kernel doesn't have CONFIG_IP_NF_RAW compiled in, so Docker's
+# "DIRECT ACCESS FILTERING" feature fails. Disable it via the environment variable
+# introduced in Docker 28.0.2 (https://github.com/moby/moby/pull/49621).
+RUN mkdir -p /etc/systemd/system/docker.service.d && \
+    printf '[Service]\nEnvironment="DOCKER_INSECURE_NO_IPTABLES_RAW=1"\n' \
+    > /etc/systemd/system/docker.service.d/no-iptables-raw.conf

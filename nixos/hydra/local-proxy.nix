@@ -79,10 +79,12 @@ in
       useACMEHost = mavenDomain;
 
       # Proxy for Clojars (Clojure specific)
-      locations."~ ^/repo/(.*)$" = {
+      locations."/repo/" = {
         extraConfig = ''
           set $clojars_upstream "https://repo.clojars.org";
-          proxy_pass $clojars_upstream/$1;
+          
+          rewrite ^/repo/(.*)$ /$1 break;
+          proxy_pass $clojars_upstream;
           
           proxy_cache maven_cache;
           proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
@@ -99,7 +101,10 @@ in
       locations."/" = {
         extraConfig = ''
           set $maven_upstream "https://repo1.maven.org";
-          proxy_pass $maven_upstream/maven2$request_uri;
+          
+          # We use a rewrite to capture the URI so we don't have to use $request_uri in proxy_pass
+          rewrite ^/(.*)$ /maven2/$1 break;
+          proxy_pass $maven_upstream;
           
           proxy_cache maven_cache;
           proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;

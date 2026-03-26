@@ -7,6 +7,7 @@
     ./tunnel.nix
     ./apt-cacher.nix
     ./local-proxy.nix
+    ./switchbot.nix
   ];
 
   boot.loader.systemd-boot.enable = true;

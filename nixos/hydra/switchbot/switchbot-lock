@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""
+Control a SwitchBot Lock Ultra over BLE.
+
+Usage:
+  ./switchbot-lock -d AA:BB:CC:DD:EE:FF -k <KEY_ID> -e <ENC_KEY> lock
+  ./switchbot-lock -d AA:BB:CC:DD:EE:FF -k <KEY_ID> -e <ENC_KEY> unlock
+  ./switchbot-lock -d AA:BB:CC:DD:EE:FF -k <KEY_ID> -e <ENC_KEY> status
+
+Options can also be set via environment variables:
+  SWITCHBOT_MAC, SWITCHBOT_KEY_ID, SWITCHBOT_ENC_KEY
+"""
+
+import argparse
+import asyncio
+import os
+import sys
+
+from bleak import BleakScanner
+from switchbot import SwitchbotLock
+from switchbot.const import SwitchbotModel
+
+
+async def find_device(mac: str):
+    return await BleakScanner.find_device_by_address(mac, timeout=10)
+
+
+async def run(mac: str, key_id: str, enc_key: str, command: str) -> None:
+    print(f"Scanning for {mac}...")
+    device = await find_device(mac)
+    if device is None:
+        print(f"Device {mac} not found. Make sure it is powered and in range.")
+        sys.exit(1)
+
+    lock = SwitchbotLock(
+        device,
+        key_id=key_id,
+        encryption_key=enc_key,
+        model=SwitchbotModel.LOCK_ULTRA,
+    )
+
+    if command == "status":
+        info = await lock.get_basic_info()
+        if info is None:
+            print("Failed to retrieve status.")
+            sys.exit(1)
+        status = lock.get_lock_status()
+        print(f"Status:     {status.name if status else 'unknown'}")
+        print(f"Door open:  {info.get('door_open', 'n/a')}")
+        print(f"Battery:    {info.get('battery', 'n/a')}%")
+        print(f"Firmware:   {info.get('firmware', 'n/a')}")
+    elif command == "lock":
+        print("Locking...")
+        ok = await lock.lock()
+        print("Done." if ok else "Command failed.")
+        sys.exit(0 if ok else 1)
+    elif command == "unlock":
+        print("Unlocking...")
+        ok = await lock.unlock()
+        print("Done." if ok else "Command failed.")
+        sys.exit(0 if ok else 1)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Control a SwitchBot Lock Ultra")
+    parser.add_argument(
+        "-d", "--device",
+        default=os.environ.get("SWITCHBOT_MAC"),
+        help="BLE MAC address of the lock (or set SWITCHBOT_MAC)",
+    )
+    parser.add_argument(
+        "-k", "--key-id",
+        default=os.environ.get("SWITCHBOT_KEY_ID"),
+        help="Encryption key ID (or set SWITCHBOT_KEY_ID)",
+    )
+    parser.add_argument(
+        "-e", "--enc-key",
+        default=os.environ.get("SWITCHBOT_ENC_KEY"),
+        help="Encryption key hex string (or set SWITCHBOT_ENC_KEY)",
+    )
+    parser.add_argument(
+        "command",
+        choices=["lock", "unlock", "status"],
+        help="Command to send",
+    )
+
+    args = parser.parse_args()
+
+    missing = [name for name, val in [
+        ("--device / SWITCHBOT_MAC", args.device),
+        ("--key-id / SWITCHBOT_KEY_ID", args.key_id),
+        ("--enc-key / SWITCHBOT_ENC_KEY", args.enc_key),
+    ] if not val]
+
+    if missing:
+        print("Missing required arguments:", ", ".join(missing), file=sys.stderr)
+        parser.print_help()
+        sys.exit(1)
+
+    asyncio.run(run(args.device, args.key_id, args.enc_key, args.command))
+
+
+if __name__ == "__main__":
+    main()
