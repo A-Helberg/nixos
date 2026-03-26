@@ -20,6 +20,10 @@
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     catppuccin.url = "github:catppuccin/nix";
+    nixos-fireactions = {
+      url = "github:thpham/nixos-fireactions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, nix-darwin, nix-homebrew, catppuccin, nix-helper, nixpkgs-bleeding, ... }@inputs: 
@@ -93,6 +97,16 @@
 
         modules = [
           ./nixos/kraken/configuration.nix
+        ];
+      };
+      hydra = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs outputs;
+        };
+
+        modules = [
+          ./nixos/hydra/configuration.nix
         ];
       };
     };
@@ -189,6 +203,14 @@
         ];
       };
       "andre@kraken" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgs "x86_64-linux";
+        modules = [
+          catppuccin.homeModules.catppuccin
+          ./home-manager/home.nix
+          ./home-manager/linux.nix
+        ];
+      };
+      "andre@hydra" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "x86_64-linux";
         modules = [
           catppuccin.homeModules.catppuccin
