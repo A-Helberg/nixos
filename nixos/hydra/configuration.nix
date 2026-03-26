@@ -45,12 +45,13 @@
 
   systemd.tmpfiles.rules = [
     "d /var/lib/hydra-secrets 0700 root root -"
+    "L+ /home/andre/build-runner-image.sh - - - - /etc/nixos/nixos/hydra/build-runner-image.sh"
   ];
 
   users.users.andre = {
     isNormalUser = true;
     description = "Andre";
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "docker" ];
     shell = pkgs.zsh;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGLlNhvRxSPN9zNLcPTSL9TbTiqIo+pscmbtL1xAI8uN andre"
@@ -63,6 +64,9 @@
     settings.PasswordAuthentication = false;
   };
 
+  # Enable Docker for building custom runner images
+  virtualisation.docker.enable = true;
+
   # fireactions secrets are guarded by fireactions-config.service (see fireactions.nix).
   # Skip minio until its credential file is present.
   systemd.services.minio.unitConfig.ConditionPathExists = "/var/lib/hydra-secrets/minio-root";
@@ -72,6 +76,7 @@
     git
     nh
     vim
+    containerd # for the ctr command
   ];
 
   environment.sessionVariables = {

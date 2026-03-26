@@ -30,13 +30,12 @@ let
 
     pools:
       - name: Default
-        replicas: 1
-        max_replicas: 3
+        replicas: 2
         shutdown_on_exit: true
         runner:
           name: Default
-          image: "ghcr.io/hostinger/fireactions-images/ubuntu24.04:latest"
-          image_pull_policy: IfNotPresent
+          image: "docker.io/ahelberg/hydra-runner:latest"
+          image_pull_policy: Always
           group_id: 1
           organization: iConceptLogistics
           labels:
@@ -49,8 +48,8 @@ let
           kernel_image_path: "${kernelPath}"
           kernel_args: "${kernelArgs}"
           machine_config:
-            mem_size_mib: 8192
-            vcpu_count: 2
+            mem_size_mib: 12288
+            vcpu_count: 3
   '';
 
   # Script that injects secrets into the config at runtime.
