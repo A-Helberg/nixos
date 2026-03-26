@@ -96,6 +96,17 @@ in
       subnet = "10.200.0.0/24";
       externalInterface = "eno1";
     };
+    # Total size of the devmapper sparse data file (thin-provisioned, only uses
+    # real disk for what's actually written). Must be >= base_image_size * replicas.
+    containerd.thinPoolSize = "200G";
+  };
+
+  # Increase the per-VM root disk from the default 10GB. Workflows that build
+  # Docker images or download large deps can easily exhaust 10GB.
+  virtualisation.containerd.settings = {
+    plugins."io.containerd.snapshotter.v1.devmapper" = {
+      base_image_size = lib.mkForce "40GB";
+    };
   };
 
   # CNI config for fireactions bridge (required by firecracker-go-sdk).

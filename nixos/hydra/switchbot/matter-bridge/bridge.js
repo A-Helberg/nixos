@@ -25,6 +25,33 @@ import { readFileSync } from "node:fs";
 const execFileAsync = promisify(execFile);
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Parse `switchbot-lock status` stdout into a DoorLock.LockState value. */
+function parseLockState(stdout) {
+    const match = stdout.match(/^Status:\s+(\w+)/m);
+    if (!match) return null;
+    switch (match[1].toUpperCase()) {
+        case "LOCKED":           return DoorLock.LockState.Locked;
+        case "UNLOCKED":         return DoorLock.LockState.Unlocked;
+        case "NOT_FULLY_LOCKED": return DoorLock.LockState.NotFullyLocked;
+        default:                 return null;  // LOCKING/UNLOCKING/BLOCKED — skip update
+    }
+}
+
+/** Query the physical lock and return its current LockState (or null on error). */
+async function queryLockState() {
+    try {
+        const { stdout } = await execFileAsync("switchbot-lock", ["status"]);
+        return parseLockState(stdout);
+    } catch (err) {
+        console.error("[bridge] Status query failed:", err.message);
+        return null;
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Configuration
 // ---------------------------------------------------------------------------
 
@@ -38,11 +65,32 @@ const UNIQUE_ID    = process.env.MATTER_UNIQUE_ID ?? "switchbot-lock-ultra-bridg
 // Custom DoorLock behavior – shells out to `switchbot-lock`
 // ---------------------------------------------------------------------------
 
+const POLL_INTERVAL_MS = 60_000; // sync state from the lock every 60 s
+
 class SwitchbotLockServer extends DoorLockServer {
     async initialize() {
-        // Set mandatory operatingMode before the base initializer validates state
         this.state.operatingMode = DoorLock.OperatingMode.Normal;
-        return super.initialize();
+        await super.initialize();
+
+        // Sync the real lock state before announcing to controllers
+        const state = await queryLockState();
+        if (state !== null) {
+            this.state.lockState = state;
+            console.log(`[bridge] Initial lock state: ${Object.keys(DoorLock.LockState).find(k => DoorLock.LockState[k] === state)}`);
+        }
+
+        // Keep polling so HomeKit stays in sync with manual lock operations
+        this[Symbol.for("pollInterval")] = setInterval(async () => {
+            const polled = await queryLockState();
+            if (polled !== null && polled !== this.state.lockState) {
+                console.log("[bridge] Lock state changed externally, updating Matter state.");
+                this.state.lockState = polled;
+            }
+        }, POLL_INTERVAL_MS);
+    }
+
+    async [Symbol.asyncDispose]() {
+        clearInterval(this[Symbol.for("pollInterval")]);
     }
 
     async lockDoor() {
@@ -121,7 +169,6 @@ const lockEndpoint = new Endpoint(
             reachable: true,
         },
         doorLock: {
-            lockState: DoorLock.LockState.Locked,
             lockType: DoorLock.LockType.DeadBolt,
             actuatorEnabled: true,
         },

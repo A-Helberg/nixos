@@ -8,6 +8,7 @@
     ./apt-cacher.nix
     ./local-proxy.nix
     ./switchbot.nix
+    ./homey.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
