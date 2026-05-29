@@ -12,6 +12,9 @@
     "parallels"
   ];
 
+  homebrew.taps = [ "jank-lang/jank" ];
+  homebrew.brews = [ "jank-lang/jank/jank" ];
+
   system.defaults.dock.persistent-apps = [
     { app = "/Applications/Ghostty.app"; }
   ];

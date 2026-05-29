@@ -41,7 +41,7 @@
     };
 
     nh_overlay = final: prev: {
-      nh = inputs.nix-helper.packages.${prev.system}.default;
+      nh = inputs.nix-helper.packages.${prev.stdenv.hostPlatform.system}.default;
     };
 
     pkgs = system:
