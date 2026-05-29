@@ -848,7 +848,7 @@ require("lazy").setup({
 				-- languages here or re-enable it for the disabled ones.
 				local disable_filetypes = { c = true, cpp = true }
 				return {
-					timeout_ms = 500,
+					timeout_ms = 2000,
 					lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
 				}
 			end,
@@ -860,17 +860,17 @@ require("lazy").setup({
 				--
 				-- You can use a sub-list to tell conform to run *until* a formatter
 				-- is found.
-				javascript = { { "prettierd", "prettier" } },
-				typescript = { { "prettierd", "prettier" } },
-				javascriptreact = { { "prettierd", "prettier" } },
-				typescriptreact = { { "prettierd", "prettier" } },
-				json = { { "prettierd", "prettier" } },
-				jsonc = { { "prettierd", "prettier" } },
-				html = { { "prettierd", "prettier" } },
-				css = { { "prettierd", "prettier" } },
-				scss = { { "prettierd", "prettier" } },
-				markdown = { { "prettierd", "prettier" } },
-				yaml = { { "prettierd", "prettier" } },
+				javascript = { "biome", stop_after_first = true },
+				typescript = { "biome", stop_after_first = true },
+				javascriptreact = { "biome", stop_after_first = true },
+				typescriptreact = { "biome", stop_after_first = true },
+				json = { "biome", stop_after_first = true },
+				jsonc = { "biome", stop_after_first = true },
+				html = { "biome", stop_after_first = true },
+				css = { "biome", stop_after_first = true },
+				scss = { "biome", stop_after_first = true },
+				markdown = { "biome", stop_after_first = true },
+				yaml = { "biome", stop_after_first = true },
 				-- Scala formatting is handled by Metals LSP
 				scala = { "lsp" },
 				-- Clojure formatting

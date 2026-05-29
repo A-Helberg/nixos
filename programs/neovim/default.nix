@@ -88,6 +88,7 @@ let
       pkgs.typescript-language-server
 
       pkgs.nodejs
+      pkgs.biome
 
       #zls
     ]
