@@ -177,3 +177,15 @@ const lockEndpoint = new Endpoint(
 await aggregator.add(lockEndpoint);
 
 await server.start();
+
+process.on("SIGINT", async () => {
+    console.log("[bridge] Received SIGINT, shutting down...");
+    await server.close();
+    process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+    console.log("[bridge] Received SIGTERM, shutting down...");
+    await server.close();
+    process.exit(0);
+});

@@ -7,10 +7,9 @@
   networking.hostName = "phoenix";
   system.primaryUser = "andre";
 
-  # Phoenix uses VirtualBox and Aerospace instead of defaults
+  # Phoenix uses Parallels in addition to shared defaults
   homebrew.casks = [
-    "virtualbox"
-    "nikitabobko/tap/aerospace"
+    "parallels"
   ];
 
   system.defaults.dock.persistent-apps = [

@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let
   s3Domain = "s3.coded.page";
-  mavenDomain = "maven.coded.page";
+  cacheDomain = "cache.coded.page";
   bridgeIp = "10.200.0.1";
 in
 {
@@ -14,13 +14,13 @@ in
       # Only listen on the bridge interface so we don't interfere with the host's DNS
       interface = "fireactions0";
       bind-interfaces = true;
-      
-      # Resolve our S3 domain to the local bridge IP (which Nginx is listening on)
+
+      # Resolve our local domains to the bridge IP (Nginx listens there)
       address = [
         "/${s3Domain}/${bridgeIp}"
-        "/${mavenDomain}/${bridgeIp}"
+        "/${cacheDomain}/${bridgeIp}"
       ];
-      
+
       # Forward all other requests to a public DNS resolver
       server = [ "1.1.1.1" "1.0.0.1" ];
     };
@@ -35,28 +35,19 @@ in
   # ---------------------------------------------------------
   services.nginx = {
     enable = true;
-    
+
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
     recommendedGzipSettings = true;
     recommendedOptimisation = true;
     clientMaxBodySize = "50G";
 
-    # Setup proxy caching for Maven
-    appendHttpConfig = ''
-      proxy_cache_path /data/nginx/maven levels=1:2 keys_zone=maven_cache:10m max_size=50g inactive=30d use_temp_path=off;
-      
-      # Force IPv4 resolution for upstreams to avoid IPv6 routing issues
-      resolver 1.1.1.1 ipv6=off;
-    '';
-
     virtualHosts."${s3Domain}" = {
-      # Listen specifically on the bridge interface
       listen = [
         { addr = bridgeIp; port = 443; ssl = true; }
         { addr = bridgeIp; port = 80; }
       ];
-      
+
       forceSSL = true;
       useACMEHost = s3Domain;
 
@@ -68,65 +59,28 @@ in
       };
     };
 
-    virtualHosts."${mavenDomain}" = {
-      # Listen specifically on the bridge interface on port 443 with SSL
+    # TLS frontend for Nexus — caching is handled by Nexus itself.
+    virtualHosts."${cacheDomain}" = {
       listen = [
         { addr = bridgeIp; port = 443; ssl = true; }
         { addr = bridgeIp; port = 80; }
       ];
-      
+
       forceSSL = true;
-      useACMEHost = mavenDomain;
+      useACMEHost = cacheDomain;
 
-      # Proxy for Clojars (Clojure specific)
-      locations."/repo/" = {
-        extraConfig = ''
-          set $clojars_upstream "https://repo.clojars.org";
-          
-          rewrite ^/repo/(.*)$ /$1 break;
-          proxy_pass $clojars_upstream;
-          
-          proxy_cache maven_cache;
-          proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
-          proxy_cache_valid 200 30d;
-          proxy_cache_lock on;
-          proxy_set_header Host repo.clojars.org;
-          
-          proxy_ssl_server_name on;
-          proxy_ssl_name repo.clojars.org;
-        '';
-      };
-
-      # Proxy for Maven Central
       locations."/" = {
+        proxyPass = "http://127.0.0.1:8082";
         extraConfig = ''
-          set $maven_upstream "https://repo1.maven.org";
-          
-          # We use a rewrite to capture the URI so we don't have to use $request_uri in proxy_pass
-          rewrite ^/(.*)$ /maven2/$1 break;
-          proxy_pass $maven_upstream;
-          
-          proxy_cache maven_cache;
-          proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
-          proxy_cache_valid 200 30d;
-          proxy_cache_lock on;
-          proxy_set_header Host repo1.maven.org;
-          
-          # Don't pass through client SSL headers that might confuse upstream
-          proxy_ssl_server_name on;
-          proxy_ssl_name repo1.maven.org;
+          # Nexus needs the real host header for repository URL generation.
+          proxy_set_header Host $host;
+          # Large artifacts (JARs, tarballs) can take a while to proxy on first fetch.
+          proxy_read_timeout 300s;
+          proxy_send_timeout 300s;
         '';
       };
     };
   };
-
-  # Ensure Nginx cache directory exists on the data volume
-  systemd.tmpfiles.rules = [
-    "d /data/nginx/maven 0750 nginx nginx -"
-  ];
-
-  # Allow Nginx to write to the data volume cache directory
-  systemd.services.nginx.serviceConfig.ReadWritePaths = [ "/data/nginx/maven" ];
 
   # Open HTTP/HTTPS ports for the VMs on the bridge
   networking.firewall.interfaces.fireactions0.allowedTCPPorts = [ 80 443 ];
@@ -142,12 +96,11 @@ in
       dnsProvider = "cloudflare";
       # This file must contain: CF_DNS_API_TOKEN=your_token_here
       environmentFile = "/var/lib/hydra-secrets/cloudflare-acme.env";
-      # We don't need to reload a public webserver, just our local Nginx
       reloadServices = [ "nginx.service" ];
       group = "nginx";
     };
 
-    certs."${mavenDomain}" = {
+    certs."${cacheDomain}" = {
       dnsProvider = "cloudflare";
       environmentFile = "/var/lib/hydra-secrets/cloudflare-acme.env";
       reloadServices = [ "nginx.service" ];

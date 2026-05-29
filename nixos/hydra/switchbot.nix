@@ -104,6 +104,7 @@ in
       WorkingDirectory = "/var/lib/switchbot-matter-bridge";
       Restart = "on-failure";
       RestartSec = "5s";
+      TimeoutStopSec = "5s";
     };
   };
 

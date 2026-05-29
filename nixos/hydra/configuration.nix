@@ -5,7 +5,7 @@
     ./fireactions.nix
     ./minio.nix
     ./tunnel.nix
-    ./apt-cacher.nix
+    ./nexus.nix
     ./local-proxy.nix
     ./switchbot.nix
     ./homey.nix

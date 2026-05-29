@@ -118,6 +118,7 @@
 
   homebrew = {
     enable = true;
+    onActivation.autoUpdate = true;
     onActivation.cleanup = "zap";
 
     brews = [
@@ -126,14 +127,19 @@
       "iproute2mac"
       "websocat"
       "llama.cpp"
+      "gitui"
+      "hashicorp/tap/packer"
     ];
 
     casks = [
+      "hashicorp/tap/hashicorp-vagrant"
       # Development
       "jetbrains-toolbox"
       "visual-studio-code"
-      "orbstack"
       "ghostty"
+    ] ++ pkgs.lib.optionals (config.networking.hostName != "phoenix") [
+      "orbstack"
+    ] ++ [
 
       # Browsers
       "firefox"
