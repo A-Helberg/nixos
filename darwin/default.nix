@@ -19,7 +19,7 @@
     env = pkgs.buildEnv {
       name = "system-applications";
       paths = config.environment.systemPackages;
-      pathsToLink = "/Applications";
+      pathsToLink = [ "/Applications" ];
     };
   in pkgs.lib.mkForce ''
     echo "setting up /Applications..." >&2
@@ -165,9 +165,9 @@
     ];
 
     masApps = {
-      "Slack" = 803453959;
-      "1Password for Safari" = 1569813296;
-      "Amphetamine" = 937984704;
+      #"Slack" = 803453959;
+      #"1Password for Safari" = 1569813296;
+      #"Amphetamine" = 937984704;
     };
   };
 }

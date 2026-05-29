@@ -55,7 +55,7 @@
     df = "duf";
   };
 
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     eval "$(zoxide init zsh)"
   '';
 }

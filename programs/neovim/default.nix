@@ -105,6 +105,8 @@ let
       vimAlias = true;
       coc.enable = false;
       withNodeJs = true;
+      withRuby = false;
+      withPython3 = false;
       # We manually enable it in the lua config
 
       plugins = [
@@ -113,6 +115,13 @@ let
         pkgs.vimPlugins.catppuccin-nvim
       ];
 
+      initLua = ''
+        require("nixos")
+        local ok, err = pcall(require, "init_user")
+        if not ok then
+          vim.notify("init_user.lua not found: " .. err, vim.log.levels.WARN)
+        end
+      '';
     };
 
     xdg.configFile."nvim/lua/nixos.lua" = {

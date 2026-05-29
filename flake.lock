@@ -199,13 +199,13 @@
       "locked": {
         "lastModified": 1779817321,
         "narHash": "sha256-aoDYNvP6VZRr0XHCADKa1ovFWan+pCl0UQGT3V4QeT4=",
-        "owner": "viperML",
+        "owner": "nix-community",
         "repo": "nh",
         "rev": "976aaa8ee7de7a042b4b88045db0708bd2da1ec0",
         "type": "github"
       },
       "original": {
-        "owner": "viperML",
+        "owner": "nix-community",
         "repo": "nh",
         "type": "github"
       }
@@ -305,11 +305,11 @@
     },
     "nixpkgs-bleeding": {
       "locked": {
-        "lastModified": 1780027224,
-        "narHash": "sha256-wX6tlm68lJg2Zyy+d4xz9UqVrqy5ZyOkhLggAGtUQoQ=",
+        "lastModified": 1780093384,
+        "narHash": "sha256-HQc8YQAIt3NXt7kg4aJdZsRlUVtV8qj1ghZ/bk42gwg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "15f88b99509e72975083ec0f6db077a916a46e4e",
+        "rev": "90b3eea3a30e21e713201deb150cf9f37e76e782",
         "type": "github"
       },
       "original": {

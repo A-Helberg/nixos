@@ -8,6 +8,6 @@
   system.primaryUser = "andre";
 
   system.defaults.dock.persistent-apps = [
-    "/Applications/Ghostty.app"
+    { app = "/Applications/Ghostty.app"; }
   ];
 }
