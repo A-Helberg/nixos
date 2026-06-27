@@ -13,18 +13,9 @@ fi
 # Prompt
 eval "$(starship init zsh)"
 
-if [[ -f "$HOME/.asdf/asdf.sh" ]]; then
-  . "$HOME/.asdf/asdf.sh"
-fi
-
 if [[ -f "$HOME/.opam/opam-init/init.zsh" ]]; then
     eval $(opam env)
 fi
-
-# asdf
-ASDF_BIN=$(dirname $(readlink $(which asdf)))
-ASDF_SOURCE_PATH=$(realpath "$ASDF_BIN/../share/asdf-vm/asdf.sh")
-source "$ASDF_SOURCE_PATH"
 
 alias dc="docker compose"
 alias tf='terraform'

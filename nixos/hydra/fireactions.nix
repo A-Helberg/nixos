@@ -101,9 +101,9 @@ in
     containerd.thinPoolSize = "200G";
   };
 
-  # Increase the per-VM root disk from the default 10GB. Workflows that build
-  # Docker images or download large deps can easily exhaust 10GB.
+  # Store containerd data on the large NVMe (/data) rather than the root disk.
   virtualisation.containerd.settings = {
+    root = "/data/containerd";
     plugins."io.containerd.snapshotter.v1.devmapper" = {
       base_image_size = lib.mkForce "40GB";
     };
@@ -141,6 +141,8 @@ in
     "d /run/fireactions 0750 root root -"
     # Clean up stale sockets from VMs that didn't shut down cleanly.
     "r /var/lib/fireactions/pools/*/*.sock - - - - -"
+    # Clean up stale CNI network state left behind by Firecracker VMs.
+    "R /var/lib/cni/Default-* - - - - -"
   ];
 
   # Inject secrets and write the runtime config.

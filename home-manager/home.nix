@@ -8,7 +8,6 @@
     obsidian
     realvnc-vnc-viewer
     slack
-    asdf-vm
     rlwrap
     clojure
   ];

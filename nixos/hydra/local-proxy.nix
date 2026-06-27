@@ -2,36 +2,10 @@
 let
   s3Domain = "s3.coded.page";
   cacheDomain = "cache.coded.page";
-  bridgeIp = "10.200.0.1";
 in
 {
   # ---------------------------------------------------------
-  # 1. DNSMasq: Local DNS Server for the VMs
-  # ---------------------------------------------------------
-  services.dnsmasq = {
-    enable = true;
-    settings = {
-      # Only listen on the bridge interface so we don't interfere with the host's DNS
-      interface = "fireactions0";
-      bind-interfaces = true;
-
-      # Resolve our local domains to the bridge IP (Nginx listens there)
-      address = [
-        "/${s3Domain}/${bridgeIp}"
-        "/${cacheDomain}/${bridgeIp}"
-      ];
-
-      # Forward all other requests to a public DNS resolver
-      server = [ "1.1.1.1" "1.0.0.1" ];
-    };
-  };
-
-  # Open DNS port for the VMs
-  networking.firewall.allowedUDPPorts = [ 53 ];
-  networking.firewall.allowedTCPPorts = [ 53 ];
-
-  # ---------------------------------------------------------
-  # 2. Nginx: Local Proxy with Valid SSL
+  # 1. Nginx: LAN Proxy with Valid SSL
   # ---------------------------------------------------------
   services.nginx = {
     enable = true;
@@ -43,11 +17,6 @@ in
     clientMaxBodySize = "50G";
 
     virtualHosts."${s3Domain}" = {
-      listen = [
-        { addr = bridgeIp; port = 443; ssl = true; }
-        { addr = bridgeIp; port = 80; }
-      ];
-
       forceSSL = true;
       useACMEHost = s3Domain;
 
@@ -61,11 +30,6 @@ in
 
     # TLS frontend for Nexus — caching is handled by Nexus itself.
     virtualHosts."${cacheDomain}" = {
-      listen = [
-        { addr = bridgeIp; port = 443; ssl = true; }
-        { addr = bridgeIp; port = 80; }
-      ];
-
       forceSSL = true;
       useACMEHost = cacheDomain;
 
@@ -82,11 +46,10 @@ in
     };
   };
 
-  # Open HTTP/HTTPS ports for the VMs on the bridge
-  networking.firewall.interfaces.fireactions0.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
 
   # ---------------------------------------------------------
-  # 3. ACME: Fetch Let's Encrypt Cert via Cloudflare DNS
+  # 2. ACME: Fetch Let's Encrypt Cert via Cloudflare DNS
   # ---------------------------------------------------------
   security.acme = {
     acceptTerms = true;

@@ -12,8 +12,6 @@ in
       nps = "cat package.json | jq .scripts";
     };
 
-      #export ASDF_FORCE_PREPEND="no"
-      #export PATH="$PATH:$HOME/.asdf/shims:$HOME/.asdf/bin"
     initContent = ''
       source ~/.config/zsh/zshrc
     '';

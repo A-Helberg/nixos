@@ -312,7 +312,7 @@ require("lazy").setup({
 	-- "gc" to comment visual regions/lines
 	{ "numToStr/Comment.nvim", opts = {} },
 
-	{ "ggml-org/llama.vim" },
+	-- { "ggml-org/llama.vim" },
 
 	{
 		"catppuccin-nvim",

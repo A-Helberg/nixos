@@ -6,13 +6,19 @@ Usage:
   ./switchbot-lock -d AA:BB:CC:DD:EE:FF -k <KEY_ID> -e <ENC_KEY> lock
   ./switchbot-lock -d AA:BB:CC:DD:EE:FF -k <KEY_ID> -e <ENC_KEY> unlock
   ./switchbot-lock -d AA:BB:CC:DD:EE:FF -k <KEY_ID> -e <ENC_KEY> status
+  ./switchbot-lock -d AA:BB:CC:DD:EE:FF -k <KEY_ID> -e <ENC_KEY> scan
 
 Options can also be set via environment variables:
   SWITCHBOT_MAC, SWITCHBOT_KEY_ID, SWITCHBOT_ENC_KEY
+
+The `scan` command runs forever, printing a JSON line to stdout whenever the
+lock's state or door-open status changes.  It uses passive BLE advertisement
+scanning so no GATT connection is required after startup.
 """
 
 import argparse
 import asyncio
+import json
 import os
 import sys
 
@@ -26,6 +32,10 @@ async def find_device(mac: str):
 
 
 async def run(mac: str, key_id: str, enc_key: str, command: str) -> None:
+    if command == "scan":
+        await scan_advertisements(mac)
+        return
+
     print(f"Scanning for {mac}...")
     device = await find_device(mac)
     if device is None:
@@ -61,6 +71,80 @@ async def run(mac: str, key_id: str, enc_key: str, command: str) -> None:
         sys.exit(0 if ok else 1)
 
 
+SWITCHBOT_MFR_ID = 0x0969
+
+# Status bits → string, from pySwitchbot's LockStatus enum
+_LOCK_STATUS = {
+    0: "LOCKED",
+    1: "UNLOCKED",
+    2: "LOCKING",
+    3: "UNLOCKING",
+    4: "LOCKING_STOP",
+    5: "UNLOCKING_STOP",
+    6: "NOT_FULLY_LOCKED",
+}
+
+
+def _parse_lock_mfr(mfr_data: bytes) -> dict | None:
+    """
+    Parse SwitchBot lock manufacturer data bytes directly.
+
+    Layout (Lock Ultra / Lock Pro — pySwitchbot parse_common_data):
+      byte 7: bits 6-3 = LockStatus, bit 7 = calibration
+      byte 8: bit 4 = door_open
+    """
+    if len(mfr_data) < 9:
+        return None
+    status_bits = (mfr_data[7] & 0b01111000) >> 3
+    door_open   = bool(mfr_data[8] & 0b00010000)
+    status      = _LOCK_STATUS.get(status_bits, "UNKNOWN")
+    return {"status": status, "door_open": door_open}
+
+
+async def scan_advertisements(mac: str) -> None:
+    """
+    Passively scan BLE advertisements from the lock.  Emits a JSON line to
+    stdout whenever the lock state or door-open status changes.  Runs until
+    the process is killed (SIGTERM/SIGINT).
+    """
+    target_mac = mac.upper()
+    last_emitted: dict = {}
+
+    def on_advertisement(device, adv_data):
+        nonlocal last_emitted
+        if device.address.upper() != target_mac:
+            return
+
+        mfr_data = adv_data.manufacturer_data.get(SWITCHBOT_MFR_ID)
+        if mfr_data is None:
+            # Log once so we know the lock IS seen but without the expected mfr ID.
+            if not last_emitted.get("_mfr_warned"):
+                last_emitted["_mfr_warned"] = True
+                print(
+                    f"[scan] lock seen but no mfr ID {SWITCHBOT_MFR_ID:#06x}; "
+                    f"available IDs: {list(adv_data.manufacturer_data.keys())}",
+                    file=sys.stderr, flush=True,
+                )
+            return
+
+        state = _parse_lock_mfr(bytes(mfr_data))
+        if state is None:
+            return
+
+        # Only emit when something changes.
+        comparable = {k: v for k, v in state.items()}
+        if comparable == {k: last_emitted.get(k) for k in comparable}:
+            return
+
+        last_emitted.update(comparable)
+        print(json.dumps(state), flush=True)
+
+    async with BleakScanner(detection_callback=on_advertisement):
+        # Run until killed.
+        while True:
+            await asyncio.sleep(3600)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Control a SwitchBot Lock Ultra")
     parser.add_argument(
@@ -80,11 +164,20 @@ def main() -> None:
     )
     parser.add_argument(
         "command",
-        choices=["lock", "unlock", "status"],
+        choices=["lock", "unlock", "status", "scan"],
         help="Command to send",
     )
 
     args = parser.parse_args()
+
+    # scan only requires the MAC address.
+    if args.command == "scan":
+        if not args.device:
+            print("Missing required argument: --device / SWITCHBOT_MAC", file=sys.stderr)
+            parser.print_help()
+            sys.exit(1)
+        asyncio.run(run(args.device, "", "", args.command))
+        return
 
     missing = [name for name, val in [
         ("--device / SWITCHBOT_MAC", args.device),

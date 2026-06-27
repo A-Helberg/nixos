@@ -2,13 +2,12 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./fireactions.nix
-    ./minio.nix
     ./tunnel.nix
     ./nexus.nix
     ./local-proxy.nix
-    ./switchbot.nix
-    ./homey.nix
+    # ./switchbot.nix  # disabled – keep files for reference
+    ./switchbot-api.nix
+    ./homebridge.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -21,7 +20,7 @@
     networkmanager.enable = false;
     useDHCP = false;
     defaultGateway = "10.253.1.254";
-    nameservers = [ "1.1.1.1" ];
+    nameservers = [ "1.1.1.1" "8.8.8.8" ];
 
     # Ubuntu may expose this NIC as enp0s31f6 or eno1.
     interfaces.eno1 = {
@@ -69,16 +68,11 @@
   # Enable Docker for building custom runner images
   virtualisation.docker.enable = true;
 
-  # fireactions secrets are guarded by fireactions-config.service (see fireactions.nix).
-  # Skip minio until its credential file is present.
-  systemd.services.minio.unitConfig.ConditionPathExists = "/var/lib/hydra-secrets/minio-root";
-
   environment.systemPackages = with pkgs; [
     curl
     git
     nh
     vim
-    containerd # for the ctr command
   ];
 
   environment.sessionVariables = {

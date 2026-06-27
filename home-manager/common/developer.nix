@@ -30,6 +30,10 @@
     };
   };
 
+  programs.mise = {
+    enable = true;
+  };
+
   programs.zsh = {
     enable = true;
     sessionVariables = {

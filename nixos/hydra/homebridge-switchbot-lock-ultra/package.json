@@ -1,0 +1,13 @@
+{
+  "name": "homebridge-switchbot-lock-ultra",
+  "version": "1.0.0",
+  "description": "Custom Homebridge plugin for SwitchBot Lock Ultra via local HTTP API",
+  "main": "index.js",
+  "engines": {
+    "homebridge": ">=1.6.0",
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "homebridge-plugin"
+  ]
+}
