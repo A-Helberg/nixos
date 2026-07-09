@@ -1113,7 +1113,8 @@ require("lazy").setup({
 		},
 		cmd = "Neogit",
 		keys = {
-			{ "<leader>gg", "<cmd>Neogit<cr>", desc = "Neogit" },
+			{ "<leader>gg", function() require("gitpanel").toggle() end, desc = "Git panel (gitui-like)" },
+			{ "<leader>gN", "<cmd>Neogit<cr>", desc = "Neogit (magit)" },
 			{ "<leader>gc", "<cmd>Neogit commit<cr>", desc = "Git commit" },
 			{ "<leader>gp", "<cmd>Neogit push<cr>", desc = "Git push" },
 			{ "<leader>gP", "<cmd>Neogit pull<cr>", desc = "Git pull" },
