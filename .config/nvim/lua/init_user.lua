@@ -450,6 +450,7 @@ require("lazy").setup({
 				{ "<leader>t", group = "[T]oggle" },
 				{ "<leader>g", group = "[G]it" },
 				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+				{ "<leader>z", desc = "[Z]oom focus selection", mode = { "v" } },
 
 				-- { "<localleader>o", group = "[O]rg mode", mode = { "n" } },
 				{ "<localleader>c", group = "[C]onnection", mode = { "n" } },
@@ -1193,6 +1194,100 @@ require("lazy").setup({
 		})
 	end,
 })
+
+-- Floating focus buffer: visual-select lines, <leader>z to open in a centered float.
+-- Edits in the float sync back to the original buffer on close only if changed.
+vim.api.nvim_set_hl(0, "FocusOverlay", { bg = "#000000" })
+
+local function open_focus_float()
+	local start_line, end_line
+	local mode = vim.fn.mode()
+
+	if vim.tbl_contains({ "v", "V", "\22" }, mode) then
+		-- Callback fires while still in visual mode — marks not updated yet
+		local anchor = vim.fn.line("v")
+		local cursor = vim.fn.line(".")
+		start_line = math.min(anchor, cursor)
+		end_line = math.max(anchor, cursor)
+	else
+		start_line = vim.fn.line("'<")
+		end_line = vim.fn.line("'>")
+	end
+
+	if not start_line or start_line == 0 or end_line == 0 or start_line > end_line then
+		vim.notify("focus: make a visual selection first", vim.log.levels.WARN)
+		return
+	end
+
+	local orig_buf = vim.api.nvim_get_current_buf()
+	local filetype = vim.bo.filetype
+	local lines = vim.api.nvim_buf_get_lines(orig_buf, start_line - 1, end_line, false)
+
+	local width = math.floor(vim.o.columns * 0.8)
+	local height = math.min(#lines + 2, math.floor(vim.o.lines * 0.8))
+	local row = math.floor((vim.o.lines - height) / 2)
+	local col = math.floor((vim.o.columns - width) / 2)
+
+	local float_buf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_buf_set_lines(float_buf, 0, -1, false, lines)
+	vim.bo[float_buf].bufhidden = "wipe"
+	vim.bo[float_buf].modifiable = true
+
+	-- Full-screen black overlay float between the editor and the focus float
+	local overlay_buf = vim.api.nvim_create_buf(false, true)
+	local overlay_win = vim.api.nvim_open_win(overlay_buf, false, {
+		relative = "editor",
+		width = vim.o.columns,
+		height = vim.o.lines,
+		row = 0,
+		col = 0,
+		style = "minimal",
+		focusable = false,
+		zindex = 10,
+	})
+	vim.wo[overlay_win].winhighlight = "Normal:FocusOverlay,NormalFloat:FocusOverlay"
+	vim.wo[overlay_win].winblend = 35
+
+	local win = vim.api.nvim_open_win(float_buf, true, {
+		relative = "editor",
+		width = width,
+		height = height,
+		row = row,
+		col = col,
+		style = "minimal",
+		border = "rounded",
+		title = string.format(" Focus [lines %d-%d] ", start_line, end_line),
+		title_pos = "center",
+		zindex = 20,
+	})
+	vim.wo[win].winblend = 0
+	-- Set filetype now that float_buf is the current buffer, so FileType autocmds
+	-- fire properly — this is what causes Conjure to attach and show eval results.
+	vim.bo.filetype = filetype
+
+	vim.api.nvim_create_autocmd("WinClosed", {
+		pattern = tostring(win),
+		once = true,
+		callback = function()
+			if vim.api.nvim_win_is_valid(overlay_win) then
+				vim.api.nvim_win_close(overlay_win, true)
+			end
+			if vim.api.nvim_buf_is_valid(float_buf) and vim.api.nvim_buf_is_valid(orig_buf) then
+				local new_lines = vim.api.nvim_buf_get_lines(float_buf, 0, -1, false)
+				local orig_lines = vim.api.nvim_buf_get_lines(orig_buf, start_line - 1, end_line, false)
+				if not vim.deep_equal(new_lines, orig_lines) then
+					vim.api.nvim_buf_set_lines(orig_buf, start_line - 1, end_line, false, new_lines)
+				end
+			end
+		end,
+	})
+
+	vim.keymap.set("n", "q", function()
+		vim.api.nvim_win_close(win, true)
+	end, { buffer = float_buf, noremap = true, desc = "Close focus buffer" })
+end
+
+vim.keymap.set("v", "<leader>z", open_focus_float, { desc = "[Z]oom focus selection" })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
