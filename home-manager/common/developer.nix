@@ -20,6 +20,7 @@
     ignores = [
       ".DS_Store"
       ".idea"
+      ".tieped-cache"
     ];
     settings = {
       user = {
