@@ -26,7 +26,8 @@ M.selected = nil -- { which, path, untracked } currently shown in the diff pane
 M.root = nil
 M.aug = nil
 M.timer = nil
-M.last_key = nil -- hash of last status output, to skip redundant renders
+M.rendered_sig = nil -- signature of the repo state currently displayed
+M.stale = false -- true when the on-disk state differs from what's displayed
 M.return_win = nil -- window to refocus when the panel closes
 
 -- Porcelain XY combinations that mean "unmerged / conflicted".
@@ -92,9 +93,21 @@ end
 
 -- ── status ────────────────────────────────────────────────────────────────
 
+local function get_porcelain()
+	return git({ "status", "--porcelain=v1", "-z", "--untracked-files=all" })
+end
+
+---A cheap fingerprint of the whole repo state — status plus both diffs, so
+---content edits to already-modified files are detected too (porcelain alone
+---misses them). Returns (sha, porcelain) so callers can reuse the porcelain.
+local function compute_signature(porcelain)
+	porcelain = porcelain or get_porcelain()
+	local blob = porcelain .. "\0" .. git({ "diff" }) .. "\0" .. git({ "diff", "--cached" })
+	return vim.fn.sha256(blob), porcelain
+end
+
 ---Parse `git status --porcelain=v1 -z` into unstaged/staged file lists.
-local function load_status()
-	local out = git({ "status", "--porcelain=v1", "-z", "--untracked-files=all" })
+local function parse_status(out)
 	local entries = vim.split(out, "\0", { plain = true })
 	local unstaged, staged = {}, {}
 
@@ -129,7 +142,6 @@ local function load_status()
 
 	M.lists.unstaged = unstaged
 	M.lists.staged = staged
-	return out
 end
 
 -- ── hunks ─────────────────────────────────────────────────────────────────
@@ -316,6 +328,15 @@ local function title_chunks(active, text)
 	return { { "   " .. text .. " ", "FloatTitle" } }
 end
 
+local function apply_title(win, active, text)
+	local chunks = title_chunks(active, text)
+	if M.stale then
+		-- Signal that the on-disk state changed; press r to refresh.
+		table.insert(chunks, { "⟳ r ", "DiagnosticWarn" })
+	end
+	vim.api.nvim_win_set_config(win, { title = chunks, title_pos = "left" })
+end
+
 local function set_titles()
 	-- The list that the diff currently reflects stays highlighted even while
 	-- focus is in the diff pane.
@@ -326,15 +347,13 @@ local function set_titles()
 	}
 	for which, d in pairs(defs) do
 		if valid(d.win) then
-			local text = string.format("%s (%d)", d.label, d.n)
-			vim.api.nvim_win_set_config(d.win, { title = title_chunks(M.focus == which, text), title_pos = "left" })
+			apply_title(d.win, M.focus == which, string.format("%s (%d)", d.label, d.n))
 			vim.wo[d.win].cursorline = (active_list == which)
 		end
 	end
 	if valid(M.win.diff) then
 		local name = M.selected and M.selected.path or ""
-		local text = "Diff" .. (name ~= "" and (" — " .. name) or "")
-		vim.api.nvim_win_set_config(M.win.diff, { title = title_chunks(M.focus == "diff", text), title_pos = "left" })
+		apply_title(M.win.diff, M.focus == "diff", "Diff" .. (name ~= "" and (" — " .. name) or ""))
 		vim.wo[M.win.diff].cursorline = (M.focus == "diff")
 	end
 end
@@ -397,11 +416,20 @@ end
 
 -- ── refresh ───────────────────────────────────────────────────────────────
 
----@param force boolean? re-render even if the status output is unchanged
+---@param force boolean? re-render even if nothing changed since last render
 function M.refresh(force)
 	if not M.is_open() then
 		return
 	end
+	local sig, porcelain = compute_signature()
+	if not force and sig == M.rendered_sig then
+		if M.stale then -- nothing actually changed; drop a stale flag if set
+			M.stale = false
+			set_titles()
+		end
+		return
+	end
+
 	local cursors = {}
 	for _, which in ipairs({ "unstaged", "staged" }) do
 		if valid(M.win[which]) then
@@ -409,11 +437,9 @@ function M.refresh(force)
 		end
 	end
 
-	local key = load_status()
-	if not force and key == M.last_key then
-		return
-	end
-	M.last_key = key
+	parse_status(porcelain)
+	M.rendered_sig = sig
+	M.stale = false
 
 	render_list("unstaged")
 	render_list("staged")
@@ -564,6 +590,20 @@ local function reselect_hunk(prefer)
 		pcall(vim.api.nvim_win_set_cursor, M.win.diff, { hunks[i].start, 0 })
 	end
 	highlight_current_hunk()
+end
+
+---Explicit refresh (the `r` key). Unlike a background refresh, this also
+---re-renders the diff pane when you're in it, keeping you near the same hunk.
+function M.manual_refresh()
+	local prefer = 1
+	if M.focus == "diff" then
+		local _, _, hunks = diff_hunks()
+		prefer = current_hunk_index(hunks) or 1
+	end
+	M.refresh(true)
+	if M.focus == "diff" then
+		reselect_hunk(prefer)
+	end
 end
 
 function M.stage_hunk()
@@ -948,7 +988,8 @@ function M.close()
 	end
 	M.buf = {}
 	M.selected = nil
-	M.last_key = nil
+	M.rendered_sig = nil
+	M.stale = false
 	-- Return focus to wherever we were before the panel opened.
 	if valid(M.return_win) then
 		pcall(vim.api.nvim_set_current_win, M.return_win)
@@ -971,9 +1012,7 @@ local function set_keymaps(buf, kind)
 	end
 	map("q", M.close, "close")
 	map("<Esc>", M.close, "close")
-	map("r", function()
-		M.refresh(true)
-	end, "refresh")
+	map("r", M.manual_refresh, "refresh")
 	map("c", M.commit, "commit (neogit)")
 	map("o", M.open_file, "open file in editor")
 	map("?", M.show_help, "help")
@@ -1066,7 +1105,8 @@ function M.open()
 
 	M.focus = "unstaged"
 	M.selected = nil
-	M.last_key = nil
+	M.rendered_sig = nil
+	M.stale = false
 	M.refresh(true)
 	vim.api.nvim_set_current_win(M.win.unstaged)
 
@@ -1121,13 +1161,21 @@ function M.open()
 			end
 		end,
 	})
+	-- Poll only to DETECT changes (status + both diffs, so content edits to
+	-- already-modified files count). We never auto-render — just flag "stale"
+	-- and show a ⟳ hint in the titles; the user presses r to refresh.
 	M.timer = assert(vim.uv.new_timer())
 	M.timer:start(
-		1500,
-		1500,
+		2000,
+		2000,
 		vim.schedule_wrap(function()
-			if M.is_open() then
-				M.refresh(false)
+			if not M.is_open() then
+				return
+			end
+			local changed = compute_signature() ~= M.rendered_sig
+			if changed ~= M.stale then
+				M.stale = changed
+				set_titles()
 			end
 		end)
 	)
