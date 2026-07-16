@@ -6,6 +6,11 @@ require("nixos")
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
+-- Conjure remaps K (doc-word lookup) on every FileType event —
+-- including :e! — clobbering the LSP hover mapping, which only
+-- re-binds on LspAttach. Keep Conjure docs on <localleader>k instead.
+vim.g["conjure#mapping#doc_word"] = "<localleader>k"
+
 -- A simpler conjure connect shortcut
 vim.keymap.set("n", "<localleader>x", function()
 	vim.ui.input({ prompt = "Host to connect to: " }, function(input)
@@ -682,7 +687,16 @@ require("lazy").setup({
 
 					-- Opens a popup that displays documentation about the word under your cursor
 					--  See `:help K` for why this keymap.
-					map("K", vim.lsp.buf.hover, "Hover Documentation")
+					-- When tieped is attached, use its hover: same merged float,
+					-- but the inferred type ABOVE the docs instead of buried below
+					map("K", function()
+						local ok, tieped = pcall(require, "tieped")
+						if ok and #vim.lsp.get_clients({ bufnr = 0, name = "tieped" }) > 0 then
+							tieped.hover()
+						else
+							vim.lsp.buf.hover()
+						end
+					end, "Hover Documentation")
 
 					-- WARN: This is not Goto Definition, this is Goto Declaration.
 					--  For example, in C this would take you to the header.
@@ -1113,7 +1127,13 @@ require("lazy").setup({
 		},
 		cmd = "Neogit",
 		keys = {
-			{ "<leader>gg", function() require("gitpanel").toggle() end, desc = "Git panel (gitui-like)" },
+			{
+				"<leader>gg",
+				function()
+					require("gitpanel").toggle()
+				end,
+				desc = "Git panel (gitui-like)",
+			},
 			{ "<leader>gN", "<cmd>Neogit<cr>", desc = "Neogit (magit)" },
 			{ "<leader>gc", "<cmd>Neogit commit<cr>", desc = "Git commit" },
 			{ "<leader>gp", "<cmd>Neogit push<cr>", desc = "Git push" },
@@ -1170,6 +1190,17 @@ require("lazy").setup({
 				end,
 				group = nvim_metals_group,
 			})
+		end,
+	},
+	{ "Treeniks/isabelle-syn.nvim" },
+	{
+		"Treeniks/isabelle-lsp.nvim",
+		dependencies = { "Treeniks/isabelle-syn.nvim" },
+		config = function()
+			require("isabelle-lsp").setup({
+				isabelle_path = "/opt/homebrew/bin/isabelle",
+			})
+			vim.lsp.enable("isabelle")
 		end,
 	},
 
