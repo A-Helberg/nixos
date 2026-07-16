@@ -5,6 +5,7 @@
   nixpkgs.config.allowUnfree = true;
 
   catppuccin.enable = true;
+  catppuccin.autoEnable = true;
   catppuccin.flavor = "mocha";
 
   imports = [
