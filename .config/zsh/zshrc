@@ -13,6 +13,19 @@ fi
 # Prompt
 eval "$(starship init zsh)"
 
+# tmux: the first cd inside a session pins that directory as the place new
+# windows/splits open (read by the bindings in tmux.conf). Re-pin with:
+#   tmux set-option -u @pinned_cwd && cd <dir>
+if [[ -n "$TMUX" ]]; then
+  _tmux_pin_session_cwd() {
+    if [[ -z "$(tmux show-option -qv @pinned_cwd)" ]]; then
+      tmux set-option @pinned_cwd "$PWD"
+    fi
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook chpwd _tmux_pin_session_cwd
+fi
+
 if [[ -f "$HOME/.opam/opam-init/init.zsh" ]]; then
     eval $(opam env)
 fi
