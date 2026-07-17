@@ -123,6 +123,8 @@
 
     brews = [
       "mas"
+      "babashka"
+      "babashka/brew/bbin"
       "tailscale"
       "iproute2mac"
       "websocat"
