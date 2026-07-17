@@ -72,7 +72,6 @@ let
     home.packages = [
       pkgs.ripgrep
       pkgs.fzf
-      pkgs.fd
       pkgs.black
       pkgs.stylua
       # needed to install lsp's

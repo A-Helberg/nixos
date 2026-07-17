@@ -4,7 +4,6 @@
     bat
     eza
     zoxide
-    fd
     ripgrep
     fzf
     delta
@@ -49,7 +48,6 @@
     lt = "eza --tree";
     cat = "bat";
     cd = "z";
-    find = "fd";
     ps = "procs";
     du = "dust";
     df = "duf";
