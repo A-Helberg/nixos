@@ -128,6 +128,7 @@
       "tailscale"
       "iproute2mac"
       "websocat"
+      "lima"
       "llama.cpp"
       "gitui"
       "hashicorp/tap/packer"
