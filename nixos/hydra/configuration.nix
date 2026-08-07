@@ -10,8 +10,8 @@
     ./homebridge.nix
     ./pihole.nix
     ./forgejo.nix
-    ./plane.nix
     ./tailscale.nix
+    ./mailpit.nix
   ]
   # Private modules kept out of this public repo. Deployed to
   # /etc/nixos-private on hydra; requires rebuilding with --impure
