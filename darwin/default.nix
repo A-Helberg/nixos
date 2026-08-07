@@ -33,6 +33,15 @@
     done
   '';
 
+  system.activationScripts.postActivation.text = let
+    user = config.system.primaryUser;
+  in ''
+    # Ensure the screenshots dir exists and reload the screenshot daemon
+    # so com.apple.screencapture changes take effect without a re-login.
+    sudo -u ${user} mkdir -p /Users/${user}/Screenshots
+    sudo -u ${user} killall SystemUIServer 2>/dev/null || true
+  '';
+
   system.defaults = {
     trackpad = {
       TrackpadThreeFingerDrag = true;
@@ -91,7 +100,9 @@
       };
       
       "com.apple.screencapture" = {
-        location = "~/screenshots";
+        # Must be absolute: screencapture does not expand "~" and silently
+        # falls back to the Desktop when the path is invalid.
+        location = "/Users/andre/Screenshots";
         type = "png";
       };
       
