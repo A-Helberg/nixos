@@ -66,21 +66,24 @@ function current_branch() {
   echo ${ref#refs/heads/}
 }
 
-# Default git push to current branch
+# Default git push to current branch; optional arg overrides the remote
 function gpoc {
-  echo Pushing $(current_branch)
-  git push origin $(current_branch)
+  local remote=${1:-origin}
+  echo Pushing $(current_branch) to $remote
+  git push $remote $(current_branch)
 }
 
 function gfpoc {
-  echo FORCE Pushing $(current_branch)
-  git push -f  --set-upstream origin $(current_branch)
+  local remote=${1:-origin}
+  echo FORCE Pushing $(current_branch) to $remote
+  git push -f --set-upstream $remote $(current_branch)
 }
 
-# Default git pull from current branch
+# Default git pull from current branch; optional arg overrides the remote
 function gploc {
-  echo Pulling $(current_branch)
-  git pull origin $(current_branch)
+  local remote=${1:-origin}
+  echo Pulling $(current_branch) from $remote
+  git pull $remote $(current_branch)
 }
 
 alias gbsm='git branch --merged | egrep -v "(^\*|master|dev)"'
