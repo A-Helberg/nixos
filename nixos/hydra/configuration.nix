@@ -8,6 +8,7 @@
     # ./switchbot.nix  # disabled – keep files for reference
     ./switchbot-api.nix
     ./homebridge.nix
+    ./pihole.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
