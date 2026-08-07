@@ -91,10 +91,19 @@ in
     "com.apple.commerce".AutoUpdate = true;
   };
 
-  # screencapture needs the dir to exist; reload SystemUIServer so the
-  # location change takes effect without a re-login
+  # screencapture needs the dir to exist
   home.activation.screenshotsDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p "${config.home.homeDirectory}/Screenshots"
+  '';
+
+  # home-manager only writes the plists; Dock, Finder and SystemUIServer
+  # cache prefs and must be restarted to pick up changes without a re-login.
+  # activateSettings tells the settings daemon to re-read trackpad/keyboard
+  # prefs (three finger drag, key repeat) for the current session.
+  home.activation.reloadMacosUI = lib.hm.dag.entryAfter [ "setDarwinDefaults" ] ''
+    run /usr/bin/killall Dock 2>/dev/null || true
+    run /usr/bin/killall Finder 2>/dev/null || true
     run /usr/bin/killall SystemUIServer 2>/dev/null || true
+    run /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u || true
   '';
 }
