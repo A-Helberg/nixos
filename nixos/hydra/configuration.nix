@@ -9,6 +9,7 @@
     ./switchbot-api.nix
     ./homebridge.nix
     ./pihole.nix
+    ./forgejo.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
