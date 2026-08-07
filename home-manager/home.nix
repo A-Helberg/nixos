@@ -6,7 +6,6 @@
 
   home.packages = with pkgs; [
     obsidian
-    realvnc-vnc-viewer
     slack
     rlwrap
     clojure
