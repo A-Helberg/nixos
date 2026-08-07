@@ -101,7 +101,9 @@ in
       extraOptions = [ "--network-alias=live" ];
     };
 
-    plane-api = (backend "api" "api" [ "plane-db" "plane-redis" "plane-mq" ]) // {
+    # plane-minio must be up when the api entrypoint runs its bucket check —
+    # a missing bucket is never retried and presigned uploads then 404.
+    plane-api = (backend "api" "api" [ "plane-db" "plane-redis" "plane-mq" "plane-minio" ]) // {
       extraOptions = [ "--network-alias=api" ];
     };
     plane-worker = backend "worker" "worker" [ "plane-db" "plane-redis" "plane-mq" ];
