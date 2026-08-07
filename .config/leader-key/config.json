@@ -12,25 +12,6 @@
       "value" : "~/Projects/LeaderKey/bin/simple_dynamic.sh"
     },
     {
-      "key" : "s",
-      "label" : "Session",
-      "type" : "dynamic",
-      "value" : "~/.config/aerospace/bin/list-sessions-menu"
-    },
-    {
-      "actions" : [
-        {
-          "key" : "m",
-          "label" : "Move Window to...",
-          "type" : "dynamic",
-          "value" : "~/.config/aerospace/bin/list-sessions-menu move"
-        }
-      ],
-      "key" : "w",
-      "label" : "W̲indow",
-      "type" : "group"
-    },
-    {
       "actions" : [
         {
           "actions" : [

@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# Ask for session name using AppleScript
-NAME=$(osascript -e "text returned of (display dialog \"Create Session:\" default answer \"\" buttons {\"Cancel\", \"Create\"} default button \"Create\" with title \"New Session\")")
-
-if [ -n "$NAME" ]; then
-    ~/.config/aerospace/bin/create-session "$NAME"
-fi
