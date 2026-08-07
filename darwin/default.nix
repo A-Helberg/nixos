@@ -134,15 +134,18 @@
 
     brews = [
       "mas"
-      "babashka"
-      "babashka/brew/bbin"
       "tailscale"
       "iproute2mac"
       "websocat"
       "lima"
       "llama.cpp"
       "gitui"
+      # babashka/bbin/packer live in non-official taps and are formulae (not casks).
+      # nix-darwin defaults `trusted = true` for brews, so they're trusted automatically
+      # despite Homebrew 6.0's HOMEBREW_REQUIRE_TAP_TRUST.
       "hashicorp/tap/packer"
+      "borkdude/brew/babashka"
+      "babashka/brew/bbin"
     ];
 
     casks = [
