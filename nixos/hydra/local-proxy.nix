@@ -1,6 +1,5 @@
 { config, pkgs, ... }:
 let
-  s3Domain = "s3.coded.page";
   cacheDomain = "cache.coded.page";
 in
 {
@@ -15,18 +14,6 @@ in
     recommendedGzipSettings = true;
     recommendedOptimisation = true;
     clientMaxBodySize = "50G";
-
-    virtualHosts."${s3Domain}" = {
-      forceSSL = true;
-      useACMEHost = s3Domain;
-
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:9000";
-        extraConfig = ''
-          proxy_set_header Host $host;
-        '';
-      };
-    };
 
     # TLS frontend for Nexus — caching is handled by Nexus itself.
     virtualHosts."${cacheDomain}" = {
@@ -55,16 +42,9 @@ in
     acceptTerms = true;
     defaults.email = "helberg.andre@gmail.com";
 
-    certs."${s3Domain}" = {
-      dnsProvider = "cloudflare";
-      # This file must contain: CF_DNS_API_TOKEN=your_token_here
-      environmentFile = "/var/lib/hydra-secrets/cloudflare-acme.env";
-      reloadServices = [ "nginx.service" ];
-      group = "nginx";
-    };
-
     certs."${cacheDomain}" = {
       dnsProvider = "cloudflare";
+      # This file must contain: CF_DNS_API_TOKEN=your_token_here
       environmentFile = "/var/lib/hydra-secrets/cloudflare-acme.env";
       reloadServices = [ "nginx.service" ];
       group = "nginx";
