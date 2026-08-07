@@ -154,6 +154,7 @@
       "jetbrains-toolbox"
       "visual-studio-code"
       "ghostty"
+      "claude-code"
     ] ++ pkgs.lib.optionals (config.networking.hostName != "phoenix") [
       "orbstack"
     ] ++ [
