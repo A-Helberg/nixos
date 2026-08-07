@@ -10,6 +10,7 @@
     ./homebridge.nix
     ./pihole.nix
     ./forgejo.nix
+    ./plane.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
