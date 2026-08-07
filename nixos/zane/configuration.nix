@@ -6,8 +6,4 @@
 
   networking.hostName = "Zanes-MacBook-Air-2";
   system.primaryUser = "andre";
-
-  system.defaults.dock.persistent-apps = [
-    { app = "/Applications/Ghostty.app"; }
-  ];
 }

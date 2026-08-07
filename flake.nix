@@ -194,6 +194,13 @@
           ./home-manager/macos.nix
         ];
       };
+      "agent@phoenix" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgs "aarch64-darwin";
+        modules = [
+          catppuccin.homeModules.catppuccin
+          ./home-manager/agent.nix
+        ];
+      };
       "andre@Zanes-MacBook-Air-2" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs "aarch64-darwin";
         modules = [

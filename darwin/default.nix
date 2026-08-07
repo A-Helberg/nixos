@@ -33,93 +33,11 @@
     done
   '';
 
-  system.activationScripts.postActivation.text = let
-    user = config.system.primaryUser;
-  in ''
-    # Ensure the screenshots dir exists and reload the screenshot daemon
-    # so com.apple.screencapture changes take effect without a re-login.
-    sudo -u ${user} mkdir -p /Users/${user}/Screenshots
-    sudo -u ${user} killall SystemUIServer 2>/dev/null || true
-  '';
-
+  # Per-user preferences (trackpad, dock, finder, key repeat, etc.) live in
+  # home-manager/common/macos-defaults.nix so every GUI user gets them, not
+  # just system.primaryUser. Only genuinely system-scoped defaults stay here.
   system.defaults = {
-    trackpad = {
-      TrackpadThreeFingerDrag = true;
-      Clicking = true;
-      TrackpadRightClick = true;
-    };
-
-    dock = {
-      mru-spaces = false;
-      autohide = true;
-      largesize = 64;
-    };
-
-    finder = {
-      AppleShowAllExtensions = true;
-      ShowPathbar = true;
-      ShowStatusBar = true;
-      FXEnableExtensionChangeWarning = false;
-      _FXSortFoldersFirst = true;
-    };
-
     loginwindow.GuestEnabled = false;
-    
-    NSGlobalDomain = {
-      AppleICUForce24HourTime = true;
-      KeyRepeat = 2;
-      InitialKeyRepeat = 15;
-      ApplePressAndHoldEnabled = false;
-      NSAutomaticCapitalizationEnabled = false;
-      NSAutomaticDashSubstitutionEnabled = false;
-      NSAutomaticPeriodSubstitutionEnabled = false;
-      NSAutomaticQuoteSubstitutionEnabled = false;
-      NSAutomaticSpellingCorrectionEnabled = false;
-    };
-
-    CustomUserPreferences = {
-      NSGlobalDomain.WebKitDeveloperExtras = true;
-      
-      "com.apple.finder" = {
-        ShowExternalHardDrivesOnDesktop = true;
-        ShowHardDrivesOnDesktop = true;
-        ShowMountedServersOnDesktop = true;
-        ShowRemovableMediaOnDesktop = true;
-        _FXSortFoldersFirst = true;
-        FXDefaultSearchScope = "SCcf";
-      };
-      
-      "com.apple.desktopservices" = {
-        DSDontWriteNetworkStores = true;
-        DSDontWriteUSBStores = true;
-      };
-
-      "com.apple.screensaver" = {
-        askForPassword = 1;
-        askForPasswordDelay = 0;
-      };
-      
-      "com.apple.screencapture" = {
-        # Must be absolute: screencapture does not expand "~" and silently
-        # falls back to the Desktop when the path is invalid.
-        location = "/Users/andre/Screenshots";
-        type = "png";
-      };
-      
-      "com.apple.AdLib".allowApplePersonalizedAdvertising = false;
-      "com.apple.print.PrintingPrefs"."Quit When Finished" = true;
-      
-      "com.apple.SoftwareUpdate" = {
-        AutomaticCheckEnabled = true;
-        ScheduleFrequency = 1;
-        AutomaticDownload = 1;
-        CriticalUpdateInstall = 1;
-      };
-      
-      "com.apple.TimeMachine".DoNotOfferNewDisksForBackup = true;
-      "com.apple.ImageCapture".disableHotPlug = true;
-      "com.apple.commerce".AutoUpdate = true;
-    };
   };
 
   environment.systemPackages = with pkgs; [

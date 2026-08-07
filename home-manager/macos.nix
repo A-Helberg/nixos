@@ -2,6 +2,7 @@
 {
   imports = [
     ./common/base.nix
+    ./common/macos-defaults.nix
   ];
 
   home.homeDirectory = "/Users/andre";
