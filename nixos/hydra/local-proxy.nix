@@ -22,9 +22,10 @@ in
 
       locations."/" = {
         proxyPass = "http://127.0.0.1:8082";
+        # Nexus gets the real host header (needed for repository URL
+        # generation) from recommendedProxySettings; repeating it here
+        # would send a duplicate Host header.
         extraConfig = ''
-          # Nexus needs the real host header for repository URL generation.
-          proxy_set_header Host $host;
           # Large artifacts (JARs, tarballs) can take a while to proxy on first fetch.
           proxy_read_timeout 300s;
           proxy_send_timeout 300s;
