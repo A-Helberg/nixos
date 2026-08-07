@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -11,7 +11,11 @@
     ./pihole.nix
     ./forgejo.nix
     ./plane.nix
-  ];
+  ]
+  # Private modules kept out of this public repo. Deployed to
+  # /etc/nixos-private on hydra; requires rebuilding with --impure
+  # (e.g. `nh os switch -- --impure`). Silently skipped when absent.
+  ++ lib.optional (builtins.pathExists /etc/nixos-private/hydra.nix) /etc/nixos-private/hydra.nix;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
