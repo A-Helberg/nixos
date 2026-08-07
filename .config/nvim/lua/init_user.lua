@@ -168,6 +168,7 @@ vim.filetype.add({
 		conf = "conf",
 		env = "dotenv",
 		cljd = "clojure",
+		bb = "clojure",
 		scala = "scala",
 		sbt = "scala",
 		sc = "scala",
@@ -1211,6 +1212,7 @@ require("lazy").setup({
 		ft = "clojure",
 		opts = { lsp = true },
 	},
+	{ dir = "~/Projects/cljreview", opts = {} },
 }, {
 	dev = {
 		path = "~/.local/share/nvim/nix",
