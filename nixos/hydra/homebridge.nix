@@ -8,19 +8,26 @@
 
   system.activationScripts.homebridge-plugin-setup = {
     text = ''
-      # Install kasa plugin via startup.sh (needs hb-service from inside the container)
-      mkdir -p /data/homebridge
+      # Stage our local plugin on the persisted volume. It must NOT be
+      # copied straight into node_modules from here: hb-service/npm
+      # prunes hand-copied packages on container boot, which is how the
+      # lock integration once vanished after a container restart.
+      # startup.sh (below) re-installs it inside the container on every
+      # boot, after hb-service has run.
+      mkdir -p /data/homebridge/plugin-src/homebridge-switchbot-lock-ultra
+      cp ${./homebridge-switchbot-lock-ultra/package.json} /data/homebridge/plugin-src/homebridge-switchbot-lock-ultra/package.json
+      cp ${./homebridge-switchbot-lock-ultra/index.js}     /data/homebridge/plugin-src/homebridge-switchbot-lock-ultra/index.js
+
       cat > /data/homebridge/startup.sh << 'EOF'
 #!/bin/bash
+# Install kasa plugin (needs hb-service from inside the container)
 hb-service add homebridge-kasa-python 2>/dev/null || true
+
+# (Re-)install our local plugin after hb-service/npm may have pruned it
+mkdir -p /homebridge/node_modules/homebridge-switchbot-lock-ultra
+cp /homebridge/plugin-src/homebridge-switchbot-lock-ultra/* /homebridge/node_modules/homebridge-switchbot-lock-ultra/
 EOF
       chmod +x /data/homebridge/startup.sh
-
-      # Copy our local plugin straight into Homebridge's node_modules so it's
-      # discovered automatically — this path is on the persisted volume.
-      mkdir -p /data/homebridge/node_modules/homebridge-switchbot-lock-ultra
-      cp ${./homebridge-switchbot-lock-ultra/package.json} /data/homebridge/node_modules/homebridge-switchbot-lock-ultra/package.json
-      cp ${./homebridge-switchbot-lock-ultra/index.js}     /data/homebridge/node_modules/homebridge-switchbot-lock-ultra/index.js
     '';
     deps = [];
   };
