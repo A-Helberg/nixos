@@ -33,6 +33,12 @@
     done
   '';
 
+  # /etc/zshrc's global compinit runs before ~/.zshrc, so agent's `compinit -i`
+  # never gets a chance: compaudit rejects Homebrew's andre-owned site-functions
+  # for any other user and aborts the login shell. Every user's home-manager
+  # zshrc runs its own compinit, so the global one is redundant anyway.
+  programs.zsh.enableCompletion = false;
+
   # Per-user preferences (trackpad, dock, finder, key repeat, etc.) live in
   # home-manager/common/macos-defaults.nix so every GUI user gets them, not
   # just system.primaryUser. Only genuinely system-scoped defaults stay here.
