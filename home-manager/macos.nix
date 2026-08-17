@@ -3,6 +3,7 @@
   imports = [
     ./common/base.nix
     ./common/macos-defaults.nix
+    ./common/witchcraft.nix
   ];
 
   home.homeDirectory = "/Users/andre";

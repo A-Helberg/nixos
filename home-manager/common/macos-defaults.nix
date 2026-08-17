@@ -89,6 +89,11 @@ in
     "com.apple.TimeMachine".DoNotOfferNewDisksForBackup = true;
     "com.apple.ImageCapture".disableHotPlug = true;
     "com.apple.commerce".AutoUpdate = true;
+
+    # Hammerspoon defaults to ~/.hammerspoon/init.lua; point it at the
+    # stowed dotfiles instead.
+    "org.hammerspoon.Hammerspoon".MJConfigFile =
+      "${config.home.homeDirectory}/.config/hammerspoon/init.lua";
   };
 
   # screencapture needs the dir to exist
