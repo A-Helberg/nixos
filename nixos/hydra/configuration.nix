@@ -13,6 +13,7 @@
     ./tailscale.nix
     ./mailpit.nix
     ./itsaplan.nix
+    ./avahi.nix
   ]
   # Private modules kept out of this public repo. Deployed to
   # /etc/nixos-private on hydra; requires rebuilding with --impure
