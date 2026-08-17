@@ -1,5 +1,12 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
+  # The whole LAN's DNS: never leave FTL dead. systemd counts death by
+  # SIGHUP/SIGTERM as a *clean* exit (this once left DNS down for the
+  # network when a stray HUP killed FTL mid-startup), so on-failure is
+  # not enough — restart unconditionally.
+  # (The module already sets RestartSec=1.)
+  systemd.services.pihole-ftl.serviceConfig.Restart = lib.mkForce "always";
+
   # ---------------------------------------------------------
   # Pi-hole: network-wide ad blocking DNS
   # Point router DHCP (or individual devices) at 10.253.10.2.
