@@ -2,6 +2,7 @@
 {
   home.packages = with pkgs; [
     git
+    gh
     curl
     wget
     starship
@@ -33,6 +34,11 @@
 
   programs.mise = {
     enable = true;
+  };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
   };
 
   programs.zsh = {
