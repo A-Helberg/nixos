@@ -86,6 +86,68 @@ function gploc {
   git pull $remote $(current_branch)
 }
 
+# Pick a source remote+branch and a destination remote (all via fzf), push the
+# branch across, then open a GitHub PR on the destination with auto-merge
+# enabled (merges once required checks pass).
+function gxpr {
+  git rev-parse --is-inside-work-tree &>/dev/null || { echo "gxpr: not a git repo" >&2; return 1 }
+
+  local src branch dst repo
+  src=$(git remote | fzf --prompt='source remote> ' --height=~40%) || return 1
+
+  branch=$(git ls-remote --heads "$src" | awk '{sub("refs/heads/", "", $2); print $2}' \
+    | fzf --prompt="branch on $src> " --height=~40%) || return 1
+
+  dst=$(git remote | grep -vx "$src" | fzf --prompt='dest remote> ' --height=~40%) || return 1
+
+  echo "Pushing $src/$branch -> $dst/$branch"
+  # NB: ${branch} braces are load-bearing — zsh parses an unbraced `$branch:r`
+  # as the :r (strip-extension) modifier and eats the ":r" from the refspec
+  git fetch "$src" "refs/heads/${branch}:refs/remotes/${src}/${branch}" || return 1
+  git push "$dst" "refs/remotes/${src}/${branch}:refs/heads/${branch}" || return 1
+
+  # Materialize the branch locally in a worktree at ./<remote>/<branch> so
+  # gh's --fill has a local branch to compute the PR title/body from; on
+  # reruns reuse the existing branch/worktree and just fast-forward it
+  if git show-ref --verify --quiet "refs/heads/${branch}"; then
+    [[ -d "$src/$branch" ]] || git worktree add "$src/$branch" "$branch" || return 1
+    git -C "$src/$branch" merge --ff-only "refs/remotes/${src}/${branch}" || return 1
+  else
+    git worktree add --track -b "$branch" "$src/$branch" "refs/remotes/$src/$branch" || return 1
+  fi
+
+  # --fill also needs the base side of the range locally: fetch the
+  # destination's default branch into its remote-tracking ref
+  local base
+  base=$(git ls-remote --symref "$dst" HEAD | awk '/^ref:/ {sub("refs/heads/", "", $2); print $2}')
+  [[ -n "$base" ]] || { echo "gxpr: could not determine default branch of $dst" >&2; return 1 }
+  git fetch "$dst" "refs/heads/${base}:refs/remotes/${dst}/${base}" || return 1
+
+  # gh needs owner/repo; derive it from the destination remote's URL
+  repo=$(git remote get-url "$dst" | sed -E 's#^(git@|https://|ssh://git@)github\.com[:/]##; s#\.git$##')
+  gh pr create --repo "$repo" --head "$branch" --base "$base" --fill || return 1
+  gh pr merge --repo "$repo" --auto --merge "$branch"
+}
+
+# Sync one remote's default branch to another remote (both picked via fzf).
+# The default branch is resolved live from the source server's HEAD, and the
+# push is a plain (non-force) push, so a diverged destination fails loudly
+# instead of being clobbered.
+function gbsync {
+  git rev-parse --is-inside-work-tree &>/dev/null || { echo "gbsync: not a git repo" >&2; return 1 }
+
+  local src dst branch
+  src=$(git remote | fzf --prompt='sync from> ' --height=~40%) || return 1
+  dst=$(git remote | grep -vx "$src" | fzf --prompt='sync to> ' --height=~40%) || return 1
+
+  branch=$(git ls-remote --symref "$src" HEAD | awk '/^ref:/ {sub("refs/heads/", "", $2); print $2}')
+  [[ -n "$branch" ]] || { echo "gbsync: could not determine default branch of $src" >&2; return 1 }
+
+  echo "Syncing $src/$branch -> $dst/$branch"
+  git fetch "$src" "refs/heads/$branch" || return 1
+  git push "$dst" "FETCH_HEAD:refs/heads/$branch"
+}
+
 alias gbsm='git branch --merged | egrep -v "(^\*|master|dev)"'
 alias gbdm='git branch --merged | egrep -v "(^\*|master|dev)" | xargs git branch -d'
 
