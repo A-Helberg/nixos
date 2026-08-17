@@ -27,4 +27,14 @@
     FLAKE = "/Users/andre/nixos";
     NH_FLAKE = "/Users/andre/nixos";
   };
+
+  # Claude Code is installed per-user via the native installer
+  # (curl -fsSL https://claude.ai/install.sh | bash) because agent can't
+  # run brew (non-admin) and the shared cask can't self-update for it.
+  # ~/.local/bin must come before /opt/homebrew/bin so the self-updating
+  # copy shadows the cask's.
+  programs.zsh.initContent = lib.mkAfter ''
+    export PATH="$HOME/.local/bin:$PATH"
+  '';
+  home.sessionPath = [ "$HOME/.local/bin" ];
 }
