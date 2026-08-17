@@ -49,6 +49,9 @@
   environment.systemPackages = with pkgs; [
     mkalias
     nh
+    # Ghostty itself comes from homebrew, but ssh sessions from a Ghostty
+    # terminal need the xterm-ghostty terminfo entry on the remote host
+    ghostty-bin.terminfo
   ];
 
   homebrew = {
