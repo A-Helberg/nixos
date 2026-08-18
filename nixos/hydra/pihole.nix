@@ -25,6 +25,13 @@
         url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
         description = "StevenBlack unified hosts";
       }
+      # StevenBlack alone misses in-app ad SDK infrastructure: TikTok/Pangle
+      # ads got through via p16-ad-sg.ibyteimg.com, i18n-pglstatp.com and
+      # ib.snssdk.com, all of which Pro++ blocks (ABP format, zone-wide).
+      {
+        url = "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/pro.plus.txt";
+        description = "hagezi Multi PRO++";
+      }
     ];
 
     settings = {
