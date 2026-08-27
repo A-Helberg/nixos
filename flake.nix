@@ -192,6 +192,7 @@
           catppuccin.homeModules.catppuccin
           ./home-manager/home.nix
           ./home-manager/macos.nix
+          ./home-manager/common/parakeet.nix
         ];
       };
       "agent@phoenix" = home-manager.lib.homeManagerConfiguration {
