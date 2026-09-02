@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  # Tapo/Kasa plug troubleshooting (TPAP encryption, MAC allow-list,
+  # credentials quirks, diagnostic commands): see ./Tapo-readme.md
   hardware.bluetooth.enable = true;
 
   systemd.tmpfiles.rules = [
