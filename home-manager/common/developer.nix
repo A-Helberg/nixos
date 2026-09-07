@@ -16,6 +16,11 @@
     nerd-fonts.jetbrains-mono
   ];
 
+  programs.difftastic = {
+    enable = true;
+    git.enable = true;
+  };
+
   programs.git = {
     enable = true;
     ignores = [
