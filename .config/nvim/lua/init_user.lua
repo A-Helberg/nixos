@@ -261,6 +261,23 @@ require("lazy").setup({
 		"tpope/vim-fugitive",
 		event = "VeryLazy",
 	},
+	-- Structural diffs via difftastic
+	-- https://github.com/ahkohd/difft.nvim
+	{
+		"ahkohd/difft.nvim",
+		keys = {
+			{
+				"<leader>gd",
+				function()
+					require("difft").diff()
+				end,
+				desc = "Git [D]iff (difftastic)",
+			},
+		},
+		opts = {
+			layout = "float",
+		},
+	},
 	-- Better File explorer
 	-- https://github.com/stevearc/oil.nvim
 	{
