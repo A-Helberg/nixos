@@ -81,7 +81,9 @@
       "jetbrains-toolbox"
       "visual-studio-code"
       "ghostty"
-      "claude-code"
+      # Bleeding-edge channel. The plain claude-code cask follows the "stable"
+      # release channel, which lags a handful of versions behind.
+      "claude-code@latest"
     ] ++ pkgs.lib.optionals (config.networking.hostName != "phoenix") [
       "orbstack"
     ] ++ [
@@ -103,6 +105,9 @@
       "karabiner-elements"
       "leader-key"
       "hammerspoon"
+      # Menu bar manager: maintained fork of Ice, which stalled at 0.11.12
+      # (Oct 2024) and crashes on macOS 26. Requires macOS >= 26.
+      "thaw"
       #"raycast"
 
       # Security
