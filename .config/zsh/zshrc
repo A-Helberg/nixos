@@ -2,6 +2,20 @@
 
 eval "$(direnv hook zsh)"
 
+# ~/.zshrc
+claude-r() {
+  mkdir -p "$HOME/.claude-r"
+  CLAUDE_CONFIG_DIR="$HOME/.claude-r" command claude "$@"
+}
+claude-i() {
+  mkdir -p "$HOME/.claude-i"
+  CLAUDE_CONFIG_DIR="$HOME/.claude-i" command claude "$@"
+}
+claude-n() {
+  mkdir -p "$HOME/.claude-n"
+  CLAUDE_CONFIG_DIR="$HOME/.claude-n" command claude "$@"
+}
+
 # Cursor CLI
 export PATH="$HOME/.local/bin:$PATH"
 
