@@ -47,6 +47,6 @@
 
   services.pihole-web = {
     enable = true;
-    ports = [ 8090 ]; # 80/443 nginx, 8080 fireactions, 8082 nexus
+    ports = [ 8090 ]; # 80/443 caddy, 8080 fireactions, 8082 nexus
   };
 }

@@ -167,6 +167,6 @@ in
     };
   };
 
-  # Allow VMs on the bridge to reach Nexus directly over HTTPS via nginx.
+  # Allow VMs on the bridge to reach Nexus directly (plain HTTP, port 8082).
   networking.firewall.interfaces.fireactions0.allowedTCPPorts = [ 8082 ];
 }

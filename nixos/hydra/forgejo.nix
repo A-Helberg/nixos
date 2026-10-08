@@ -43,20 +43,13 @@ in
 
   networking.firewall.allowedTCPPorts = [ 2222 ];
 
-  services.nginx.virtualHosts."${domain}" = {
-    forceSSL = true;
+  services.caddy.virtualHosts."${domain}" = {
     useACMEHost = domain;
-
-    # NB: recommendedProxySettings already injects proxy_set_header Host
-    # $host into every proxied location; adding it again in extraConfig
-    # sends a duplicate Host header, which Go's net/http rejects with 400.
-    locations."/".proxyPass = "http://127.0.0.1:3001";
+    extraConfig = "reverse_proxy 127.0.0.1:3001";
   };
 
   security.acme.certs."${domain}" = {
     dnsProvider = "cloudflare";
     environmentFile = "/var/lib/hydra-secrets/cloudflare-acme.env";
-    reloadServices = [ "nginx.service" ];
-    group = "nginx";
   };
 }

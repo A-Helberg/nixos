@@ -131,45 +131,32 @@ in
     };
   };
 
-  services.nginx.virtualHosts = {
+  # Streamed chat responses, agent runs and live updates pass through
+  # both: flush immediately. Caddy proxies websockets and long-lived
+  # connections without extra config or timeouts.
+  services.caddy.virtualHosts = {
     "${webDomain}" = {
-      forceSSL = true;
       useACMEHost = webDomain;
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:8092";
-        proxyWebsockets = true;
-        # Streamed chat responses pass through here too: no buffering, and
-        # generous timeouts for long-running agent responses.
-        extraConfig = ''
-          proxy_read_timeout 900s;
-          proxy_send_timeout 900s;
-          proxy_buffering off;
-        '';
-      };
+      extraConfig = ''
+        reverse_proxy 127.0.0.1:8092 {
+          flush_interval -1
+        }
+      '';
     };
 
     "${apiDomain}" = {
-      forceSSL = true;
       useACMEHost = webDomain;
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:8093";
-        proxyWebsockets = true;
-        # Agent runs and live updates stream through the api; don't buffer
-        # them, and allow long-lived connections.
-        extraConfig = ''
-          proxy_read_timeout 900s;
-          proxy_send_timeout 900s;
-          proxy_buffering off;
-        '';
-      };
+      extraConfig = ''
+        reverse_proxy 127.0.0.1:8093 {
+          flush_interval -1
+        }
+      '';
     };
   };
 
   security.acme.certs."${webDomain}" = {
     dnsProvider = "cloudflare";
     environmentFile = "/var/lib/hydra-secrets/cloudflare-acme.env";
-    reloadServices = [ "nginx.service" ];
-    group = "nginx";
     extraDomainNames = [ apiDomain ];
   };
 }

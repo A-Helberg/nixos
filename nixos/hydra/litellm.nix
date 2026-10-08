@@ -335,24 +335,19 @@ in
     };
   };
 
-  services.nginx.virtualHosts."${domain}" = {
-    forceSSL = true;
+  services.caddy.virtualHosts."${domain}" = {
     useACMEHost = domain;
-    locations."/" = {
-      proxyPass = "http://127.0.0.1:4000";
-      # Completions stream; don't buffer them, and allow slow models.
-      extraConfig = ''
-        proxy_read_timeout 900s;
-        proxy_send_timeout 900s;
-        proxy_buffering off;
-      '';
-    };
+    # Completions stream; flush every chunk immediately. Caddy has no
+    # response timeout by default, so slow models need nothing extra.
+    extraConfig = ''
+      reverse_proxy 127.0.0.1:4000 {
+        flush_interval -1
+      }
+    '';
   };
 
   security.acme.certs."${domain}" = {
     dnsProvider = "cloudflare";
     environmentFile = "/var/lib/hydra-secrets/cloudflare-acme.env";
-    reloadServices = [ "nginx.service" ];
-    group = "nginx";
   };
 }
