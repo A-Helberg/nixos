@@ -97,6 +97,7 @@
 
       # Productivity
       "1password"
+      "1password-cli"
       "obsidian"
       "iina"
       "the-unarchiver"
