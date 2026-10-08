@@ -273,6 +273,29 @@ require("lazy").setup({
 				end,
 				desc = "Git [D]iff (difftastic)",
 			},
+			{
+				"<leader>gD",
+				function()
+					local default = vim.fn.systemlist("git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null")[1]
+					default = (default and default ~= "") and default or "main"
+					local ref = vim.fn.input("Diff base: ", default)
+					if ref == "" then
+						return
+					end
+					vim.fn.system("git rev-parse --verify --quiet " .. vim.fn.shellescape(ref))
+					if vim.v.shell_error ~= 0 then
+						vim.notify("Unknown ref: " .. ref, vim.log.levels.ERROR)
+						return
+					end
+					local difft = require("difft")
+					-- float layout reuses the cached buffer and ignores a new cmd
+					difft.close()
+					difft.diff({
+						cmd = "GIT_EXTERNAL_DIFF='difft --color=always' git diff " .. ref .. "...",
+					})
+				end,
+				desc = "Git [D]iff against base ref (difftastic)",
+			},
 		},
 		opts = {
 			layout = "float",
