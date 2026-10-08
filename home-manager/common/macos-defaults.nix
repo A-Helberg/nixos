@@ -76,6 +76,11 @@ in
       type = "png";
     };
 
+    # Replace the space-switch slide (and other system animations) with a
+    # quick fade; there is no spaces-only animation switch on macOS.
+    "com.apple.universalaccess".reduceMotion = true;
+    "com.apple.Accessibility".ReduceMotionEnabled = 1;
+
     "com.apple.AdLib".allowApplePersonalizedAdvertising = false;
     "com.apple.print.PrintingPrefs"."Quit When Finished" = true;
 
