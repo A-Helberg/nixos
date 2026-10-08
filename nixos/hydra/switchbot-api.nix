@@ -25,8 +25,12 @@ in
 {
   systemd.services.switchbot-lock-api = {
     description = "SwitchBot Lock Ultra – local HTTP API for Homebridge";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "bluetooth.target" ];
+    # bindsTo + wantedBy bluetooth.service: when bluetoothd crashes/restarts
+    # we get stopped and started again with it. Otherwise bleak keeps a
+    # dead scanner session and the lock goes "device not found" forever.
+    wantedBy = [ "multi-user.target" "bluetooth.service" ];
+    bindsTo = [ "bluetooth.service" ];
+    after = [ "bluetooth.service" "bluetooth.target" ];
     unitConfig.ConditionPathExists = [
       "/var/lib/hydra-secrets/switchbot-mac"
       "/var/lib/hydra-secrets/switchbot-key-id"
