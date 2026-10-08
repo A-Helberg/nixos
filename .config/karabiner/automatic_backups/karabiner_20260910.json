@@ -1,32 +1,6 @@
 {
     "profiles": [
         {
-            "devices": [
-                {
-                    "identifiers": {
-                        "is_keyboard": true,
-                        "is_pointing_device": true,
-                        "product_id": 64,
-                        "vendor_id": 1118
-                    },
-                    "ignore": false,
-                    "ignore_vendor_events": true,
-                    "simple_modifications": [
-                        {
-                            "from": { "consumer_key_code": "volume_increment" },
-                            "to": [{ "key_code": "right_arrow", "modifiers": ["left_control"] }]
-                        },
-                        {
-                            "from": { "consumer_key_code": "volume_decrement" },
-                            "to": [{ "key_code": "left_arrow", "modifiers": ["left_control"] }]
-                        },
-                        {
-                            "from": { "consumer_key_code": "mute" },
-                            "to": [{ "key_code": "up_arrow", "modifiers": ["left_control"] }]
-                        }
-                    ]
-                }
-            ],
             "name": "Default profile",
             "selected": true,
             "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
