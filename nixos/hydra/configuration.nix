@@ -15,6 +15,7 @@
     ./itsaplan.nix
     ./avahi.nix
     ./litellm.nix
+    ./libredesk.nix
   ]
   # Private modules kept out of this public repo. Deployed to
   # /etc/nixos-private on hydra; requires rebuilding with --impure
