@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "llmproxy": {
+      "type": "stdio",
+      "command": "${HOME}/.local/bin/llmproxy",
+      "args": ["stdio", "--client", "iconcept"]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "llminbox": {
+      "type": "stdio",
+      "command": "${HOME}/projects/llminbox/target/release/llminbox-mcp"
+    }
+  }
+}

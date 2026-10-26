@@ -1,0 +1,4 @@
+{
+  "name": "llmproxy",
+  "description": "Services through the llmproxy MCP gateway; credentials stay in the gateway"
+}
